@@ -1,0 +1,254 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         String     @default("ADMIN")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  quizzes      Quiz[]
+  auditLogs    AuditLog[]
+}
+
+model Quiz {
+  id                  String         @id @default(cuid())
+  title               String
+  description         String?
+  instructions        String?
+  subject             String?
+  category            String?
+  targetClass         String?
+  department          String?
+  durationMinutes     Int            @default(30)
+  startDate           DateTime?
+  endDate             DateTime?
+  passingPercentage   Float          @default(40.0)
+  status              String         @default("DRAFT") // DRAFT, PUBLISHED, CLOSED, ARCHIVED
+  publicCode          String         @unique
+  randomizeQuestions  Boolean        @default(false)
+  randomizeOptions    Boolean        @default(false)
+  questionPoolSize    Int?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  adminId             String
+  admin               Admin          @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  
+  settings            QuizSettings?
+  questions           Question[]
+  attempts            Attempt[]
+  violations          ViolationLog[]
+
+  @@index([publicCode])
+  @@index([status])
+  @@index([adminId])
+}
+
+model QuizSettings {
+  id                      String    @id @default(cuid())
+  quizId                  String    @unique
+  quiz                    Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  // Response Controls
+  acceptResponses         Boolean   @default(true)
+  singleResponse          Boolean   @default(false)
+  identificationMethod    String    @default("REGISTER_NUMBER") // NAME, EMAIL, REGISTER_NUMBER, NAME_AND_REGISTER_NUMBER, EMAIL_AND_REGISTER_NUMBER
+  maxAttempts             Int       @default(1)
+  
+  // Required student identity fields
+  requireName             Boolean   @default(true)
+  requireRegisterNumber   Boolean   @default(true)
+  requireEmail            Boolean   @default(false)
+  requireClass            Boolean   @default(false)
+  requireDepartment       Boolean   @default(false)
+
+  // Anti-Cheating & Browser Monitoring
+  enableAntiCheat         Boolean   @default(true)
+  requireFullscreen       Boolean   @default(true)
+  detectTabSwitch         Boolean   @default(true)
+  detectWindowBlur        Boolean   @default(true)
+  detectCopy              Boolean   @default(true)
+  detectPaste             Boolean   @default(true)
+  detectPrint             Boolean   @default(true)
+  maxViolations           Int       @default(3)
+  violationAction         String    @default("AUTO_SUBMIT") // WARNING, AUTO_SUBMIT, TERMINATE
+  multiSessionAction      String    @default("BLOCK") // BLOCK, INVALIDATE_PREVIOUS, ALLOW
+
+  // Result & Review Display Controls
+  showScoreOnSubmit       Boolean   @default(true)
+  showPercentageOnSubmit  Boolean   @default(true)
+  showPassFailOnSubmit    Boolean   @default(true)
+  showCorrectAnswers      Boolean   @default(false)
+  showWrongAnswers        Boolean   @default(true)
+  showExplanation         Boolean   @default(false)
+  showAnswerReview        Boolean   @default(false)
+
+  // Link controls
+  isLinkDisabled          Boolean   @default(false)
+  linkExpiresAt           DateTime?
+
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
+
+model Question {
+  id              String            @id @default(cuid())
+  quizId          String?
+  quiz            Quiz?             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  
+  questionText    String
+  description     String?
+  type            String            @default("MCQ") // MCQ, MULTIPLE_SELECT, TRUE_FALSE, SHORT_ANSWER, LONG_ANSWER, FILL_IN_BLANK, RATING, LINEAR_SCALE, MATCHING, FILE_UPLOAD
+  required        Boolean           @default(true)
+  marks           Float             @default(1.0)
+  negativeMarks   Float             @default(0.0)
+  evaluationType  String?           @default("CASE_INSENSITIVE") // EXACT_MATCH, CASE_INSENSITIVE, KEYWORD_MATCH, MANUAL
+  keywords        String?           // comma separated accepted keywords or answers
+  explanation     String?
+  imageUrl        String?
+  videoUrl        String?
+  orderIndex      Int               @default(0)
+  
+  // Question Bank attributes
+  subject         String?
+  topic           String?
+  difficulty      String            @default("MEDIUM") // EASY, MEDIUM, HARD
+  isQuestionBank  Boolean           @default(false)
+
+  options         QuestionOption[]
+  answers         ResponseAnswer[]
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([quizId])
+  @@index([isQuestionBank])
+  @@index([subject])
+  @@index([difficulty])
+}
+
+model QuestionOption {
+  id          String    @id @default(cuid())
+  questionId  String
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  optionText  String
+  isCorrect   Boolean   @default(false)
+  matchTarget String?   // For matching question type (Left -> Right)
+  orderIndex  Int       @default(0)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([questionId])
+}
+
+model Attempt {
+  id                  String           @id @default(cuid())
+  quizId              String
+  quiz                Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  
+  // Student identification (No user account required)
+  studentName         String?
+  registerNumber      String?
+  email               String?
+  studentClass        String?
+  department          String?
+
+  sessionId           String
+  attemptToken        String           @unique
+  
+  // Randomized orders preserved for this attempt
+  questionOrder       String?          // JSON array of question IDs
+  optionOrderMapping  String?          // JSON map of questionId -> array of option IDs
+
+  startedAt           DateTime         @default(now())
+  expiresAt           DateTime
+  submittedAt         DateTime?
+  status              String           @default("IN_PROGRESS") // IN_PROGRESS, SUBMITTED, TERMINATED, TIMED_OUT
+
+  totalScore          Float            @default(0.0)
+  percentage          Float            @default(0.0)
+  passed              Boolean          @default(false)
+  totalCorrect        Int              @default(0)
+  totalWrong          Int              @default(0)
+  totalUnanswered     Int              @default(0)
+  totalNegativeMarks  Float            @default(0.0)
+  violationCount      Int              @default(0)
+
+  answers             ResponseAnswer[]
+  violations          ViolationLog[]
+
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@index([quizId])
+  @@index([attemptToken])
+  @@index([registerNumber])
+  @@index([email])
+  @@index([status])
+}
+
+model ResponseAnswer {
+  id                  String    @id @default(cuid())
+  attemptId           String
+  attempt             Attempt   @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  
+  questionId          String
+  question            Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  selectedOptionIds   String?   // JSON array of chosen option IDs
+  textAnswer          String?   // For Short Answer, Long Answer, Fill-in-the-blank
+  fileAnswerUrl       String?   // For File Upload
+
+  isCorrect           Boolean   @default(false)
+  marksAwarded        Float     @default(0.0)
+  negativeMarksApplied Float    @default(0.0)
+  timeSpentSeconds    Int       @default(0)
+  answeredAt          DateTime  @default(now())
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@index([questionId])
+}
+
+model ViolationLog {
+  id              String    @id @default(cuid())
+  attemptId       String
+  attempt         Attempt   @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  
+  quizId          String
+  quiz            Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  violationType   String    // TAB_SWITCH, WINDOW_BLUR, FULLSCREEN_EXIT, COPY_ATTEMPT, PASTE_ATTEMPT, PRINT_ATTEMPT, MULTIPLE_SESSION
+  durationSeconds Int       @default(0)
+  metadata        String?   // JSON string with extra context
+  timestamp       DateTime  @default(now())
+
+  @@index([attemptId])
+  @@index([quizId])
+  @@index([violationType])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  adminId   String?
+  admin     Admin?   @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  
+  action    String   // QUIZ_CREATED, QUIZ_PUBLISHED, QUESTION_ADDED, SETTINGS_UPDATED, REPORT_DOWNLOADED, etc.
+  details   String?  // JSON or descriptive details
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([action])
+}
