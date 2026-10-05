@@ -82,7 +82,7 @@ export default function AllQuizzesPage() {
       const res = await fetch(`/api/admin/quizzes/${quizId}/publish`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
-        success('Quiz published and ready for student attempts!');
+        success(data.message || 'Quiz published and ready for student attempts!');
         fetchQuizzes();
       } else {
         if (data.validationErrors) {
@@ -274,12 +274,12 @@ export default function AllQuizzesPage() {
 
                       <td className="px-5 py-4 text-right">
                         <div className="inline-flex items-center gap-1">
-                          {/* Publish / Close toggle */}
+                          {/* Publish / Close / Re-publish toggle */}
                           {quiz.status === 'DRAFT' && (
                             <button
                               onClick={() => handlePublish(quiz.id)}
                               title="Publish Quiz"
-                              className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+                              className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-lg transition"
                             >
                               <CheckCircle className="w-4 h-4" />
                             </button>
@@ -287,10 +287,19 @@ export default function AllQuizzesPage() {
                           {quiz.status === 'PUBLISHED' && (
                             <button
                               onClick={() => handleClose(quiz.id)}
-                              title="Close Quiz"
-                              className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition"
+                              title="Close Quiz (Stop accepting responses)"
+                              className="p-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/50 rounded-lg transition"
                             >
                               <XCircle className="w-4 h-4" />
+                            </button>
+                          )}
+                          {quiz.status === 'CLOSED' && (
+                            <button
+                              onClick={() => handlePublish(quiz.id)}
+                              title="Re-publish Quiz (Re-open for student submissions)"
+                              className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-lg transition"
+                            >
+                              <CheckCircle className="w-4 h-4" />
                             </button>
                           )}
 

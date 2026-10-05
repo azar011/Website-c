@@ -229,7 +229,7 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
       const res = await fetch(`/api/admin/quizzes/${id}/publish`, { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
-        success('Quiz published successfully! It is now live for students.');
+        success(data.message || 'Quiz published successfully! It is now live for students.');
         fetchQuiz();
       } else {
         if (data.validationErrors) {
@@ -273,7 +273,7 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
       {/* Top Header */}
       <AdminHeader
         title={quiz.title}
-        subtitle={`${quiz.subject || 'Assessment'} • Code: ${quiz.publicCode}`}
+        subtitle={`${quiz.subject || 'Assessment'} • Code: ${quiz.publicCode} • Status: ${quiz.status}`}
         actions={
           <div className="flex items-center gap-2">
             <Link
@@ -311,23 +311,25 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
               <span>Save</span>
             </button>
 
-            {quiz.status === 'DRAFT' ? (
-              <button
-                type="button"
-                onClick={handlePublish}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/20 transition"
-              >
-                <CheckCircle className="w-4 h-4" />
-                <span>Publish</span>
-              </button>
-            ) : (
+            {quiz.status === 'PUBLISHED' ? (
               <button
                 type="button"
                 onClick={handleClose}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow transition"
+                title="Close quiz (Stop accepting student submissions)"
               >
                 <XCircle className="w-4 h-4" />
                 <span>Close Quiz</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handlePublish}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/20 transition"
+                title={quiz.status === 'CLOSED' ? 'Re-publish assessment to open student responses' : 'Publish assessment'}
+              >
+                <CheckCircle className="w-4 h-4" />
+                <span>{quiz.status === 'CLOSED' ? 'Re-publish Quiz' : 'Publish'}</span>
               </button>
             )}
           </div>

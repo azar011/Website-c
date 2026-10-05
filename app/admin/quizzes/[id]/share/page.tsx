@@ -84,6 +84,33 @@ export default function QuizSharePage({ params }: { params: Promise<{ id: string
     success('QR code downloaded!');
   };
 
+  const handlePublish = async () => {
+    try {
+      const res = await fetch(`/api/admin/quizzes/${id}/publish`, { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        success(data.message || 'Quiz published and live for students!');
+        fetchQuiz();
+      } else {
+        error(data.error || 'Failed to publish quiz');
+      }
+    } catch {
+      error('Failed to publish quiz');
+    }
+  };
+
+  const handleClose = async () => {
+    try {
+      const res = await fetch(`/api/admin/quizzes/${id}/close`, { method: 'POST' });
+      if (res.ok) {
+        success('Quiz closed to new student responses.');
+        fetchQuiz();
+      }
+    } catch {
+      error('Failed to close quiz');
+    }
+  };
+
   const handleRegenerateLink = async () => {
     setRegenerating(true);
     try {
@@ -144,17 +171,41 @@ export default function QuizSharePage({ params }: { params: Promise<{ id: string
               <span className="text-xs text-slate-500 font-medium">
                 {quiz.status === 'PUBLISHED'
                   ? 'Accepting student attempts'
-                  : 'Currently not published'}
+                  : quiz.status === 'CLOSED'
+                  ? 'Closed (Not accepting submissions)'
+                  : 'Currently in Draft mode'}
               </span>
             </div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-1">{quiz.title}</h2>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {quiz.status === 'PUBLISHED' ? (
+              <button
+                type="button"
+                onClick={handleClose}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 text-xs font-semibold text-amber-700 dark:text-amber-400 transition"
+                title="Stop accepting student submissions"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Close Quiz</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handlePublish}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition"
+                title="Open quiz for students to take"
+              >
+                <Check className="w-3.5 h-3.5" />
+                <span>{quiz.status === 'CLOSED' ? 'Re-publish Quiz' : 'Publish Quiz'}</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => setShowRegenerateDialog(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 text-xs font-semibold text-slate-600 dark:text-slate-300"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Regenerate Link</span>

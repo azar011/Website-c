@@ -78,15 +78,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       include: { settings: true },
     });
 
+    if (quiz.settings) {
+      await prisma.quizSettings.update({
+        where: { quizId: id },
+        data: {
+          acceptResponses: true,
+          isLinkDisabled: false,
+        },
+      });
+    }
+
     await prisma.auditLog.create({
       data: {
         adminId: admin.adminId,
-        action: 'QUIZ_PUBLISHED',
+        action: quiz.status === 'CLOSED' ? 'QUIZ_REPUBLISHED' : 'QUIZ_PUBLISHED',
         details: JSON.stringify({ quizId: id, title: updated.title, publicCode: updated.publicCode }),
       },
     });
 
-    return NextResponse.json({ success: true, quiz: updated });
+    return NextResponse.json({
+      success: true,
+      quiz: updated,
+      message: quiz.status === 'CLOSED' ? 'Quiz re-published successfully!' : 'Quiz published successfully!',
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Failed to publish quiz' }, { status: 500 });
   }
