@@ -106,7 +106,7 @@ export function AdminSidebar({
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-base font-bold text-white tracking-tight leading-tight">QuizMaster</div>
+            <div className="text-base font-bold text-white tracking-tight leading-tight">Testora</div>
             <div className="text-[11px] text-indigo-400 font-medium">Assessment Engine</div>
           </div>
         </div>

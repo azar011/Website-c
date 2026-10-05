@@ -135,7 +135,7 @@ export default function StudentQuizStartPage({
         <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
           <Sparkles className="w-4 h-4" />
         </div>
-        <span className="text-sm font-bold text-white tracking-tight">QuizMaster Assessment</span>
+        <span className="text-sm font-bold text-white tracking-tight">Testora Assessment</span>
       </div>
 
       {/* Main Card */}

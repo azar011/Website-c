@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "QuizMaster | Online Assessment & Examination Platform",
-    template: "%s | QuizMaster Platform",
+    default: "Testora | Online Assessment & Examination Platform",
+    template: "%s | Testora Platform",
   },
   description: "Comprehensive online assessment, quiz creation, and anti-cheating examination platform.",
 };

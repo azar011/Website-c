@@ -1,4 +1,4 @@
-# QuizMaster — Complete Online Quiz & Assessment Management Platform
+# Testora — Complete Online Quiz & Assessment Management Platform
 
 A production-ready web application for creating, conducting, and analyzing online quizzes and assessments with Google Forms-like ease, advanced anti-cheating browser monitoring, server-side scoring, and dynamic Excel/CSV report exports.
 
@@ -13,7 +13,7 @@ A production-ready web application for creating, conducting, and analyzing onlin
 ### 2. Vercel & Cloud Database Ready
 - Fully serverless-compatible Next.js App Router architecture.
 - Does not rely on permanent local file storage — dynamic on-demand Excel, CSV, and QR code generation.
-- Supports any cloud-hosted MySQL-compatible database (**PlanetScale, TiDB Cloud, Railway MySQL, Aiven MySQL**) or SQLite for local dev via Prisma ORM.
+- Supports any cloud-hosted MySQL/PostgreSQL-compatible database (**Neon, PlanetScale, TiDB Cloud, Railway**) or SQLite for local dev via Prisma ORM.
 
 ---
 
@@ -84,7 +84,7 @@ Create a `.env` file based on `.env.example`:
 DATABASE_URL="file:./dev.db"
 AUTH_SECRET="your-super-secure-jwt-key"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
-NEXT_PUBLIC_APP_NAME="QuizMaster Assessment Platform"
+NEXT_PUBLIC_APP_NAME="Testora Assessment Platform"
 ```
 
 ### 3. Initialize Database & Seed

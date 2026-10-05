@@ -165,7 +165,7 @@ export function AdminLayoutClient({ children, admin }: AdminLayoutClientProps) {
           <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow">
             <Sparkles className="w-3.5 h-3.5" />
           </div>
-          <span className="text-sm font-bold text-white tracking-tight">QuizMaster</span>
+          <span className="text-sm font-bold text-white tracking-tight">Testora</span>
         </div>
 
         <button

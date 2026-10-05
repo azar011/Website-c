@@ -49,7 +49,7 @@ export default function HomePage() {
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-base font-bold text-white tracking-tight">QuizMaster</span>
+              <span className="text-base font-bold text-white tracking-tight">Testora</span>
               <span className="text-xs text-indigo-400 font-medium block">Assessment Engine</span>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
-        QuizMaster Assessment Management Platform • Designed for Vercel & Cloud MySQL
+        Testora Assessment Management Platform • Designed for Fast Online Examinations
       </footer>
     </div>
   );

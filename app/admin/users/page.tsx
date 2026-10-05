@@ -256,7 +256,7 @@ export default function MasterAdminSimplePage() {
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-base font-bold text-white tracking-tight">QuizMaster</span>
+              <span className="text-base font-bold text-white tracking-tight">Testora</span>
               <span className="ml-2 text-[10px] uppercase font-bold text-purple-300 bg-purple-950 border border-purple-500/40 px-2 py-0.5 rounded">
                 Master Admin
               </span>

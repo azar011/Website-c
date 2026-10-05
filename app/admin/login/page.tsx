@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-xl shadow-indigo-500/30 mb-3">
           <Sparkles className="w-7 h-7" />
         </div>
-        <h1 className="text-2xl font-black text-white tracking-tight">QuizMaster Admin</h1>
+        <h1 className="text-2xl font-black text-white tracking-tight">Testora Admin</h1>
         <p className="text-xs text-slate-400 mt-1">
           Online Assessment & Examination Management Portal
         </p>
