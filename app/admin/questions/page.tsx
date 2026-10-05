@@ -173,7 +173,7 @@ export default function QuestionBankPage() {
         }
       />
 
-      <div className="p-6 space-y-6 max-w-6xl mx-auto w-full">
+      <div className="p-4 sm:p-6 space-y-6 max-w-6xl mx-auto w-full">
         {/* Filter Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div className="relative">

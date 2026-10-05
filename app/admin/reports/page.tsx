@@ -295,7 +295,7 @@ export default function ReportsCenterPage() {
         }
       />
 
-      <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
+      <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto w-full">
         {/* ========================================================================= */}
         {/* VIEW 1: QUIZZES LIST (First screen shown when entering Report Center)    */}
         {/* ========================================================================= */}

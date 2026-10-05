@@ -336,7 +336,7 @@ export default function AdminSettingsPage() {
         subtitle="Manage administrator profile, credentials, and system audit logs."
       />
 
-      <div className="p-6 space-y-6 max-w-5xl mx-auto w-full">
+      <div className="p-4 sm:p-6 space-y-6 max-w-5xl mx-auto w-full">
         {/* ========================================================================= */}
         {/* SUPER ADMIN: SYSTEM ADMINISTRATORS MANAGEMENT SECTION                    */}
         {/* ========================================================================= */}

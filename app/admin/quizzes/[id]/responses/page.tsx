@@ -173,7 +173,7 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
         }
       />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-6">
         {/* Filters Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
           {/* Search */}
