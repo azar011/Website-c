@@ -8,8 +8,6 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  ShieldCheck,
-  CheckCircle2,
   Loader2,
   AlertCircle,
 } from 'lucide-react';

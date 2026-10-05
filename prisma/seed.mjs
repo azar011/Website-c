@@ -21,6 +21,21 @@ async function main() {
   });
   console.log(`Created/Updated Master Admin: ${masterAdmin.email}`);
 
+  // 1a. Create Azar Admin
+  const azarEmail = 'azar@mail.com';
+  const azarPassHash = await bcrypt.hash('Azar@123', 10);
+  await prisma.admin.upsert({
+    where: { email: azarEmail },
+    update: { passwordHash: azarPassHash, role: 'ADMIN', name: 'Azarudeen B' },
+    create: {
+      email: azarEmail,
+      passwordHash: azarPassHash,
+      name: 'Azarudeen B',
+      role: 'ADMIN',
+    },
+  });
+  console.log(`Created/Updated Admin: ${azarEmail}`);
+
   // 1b. Create Standard Admin
   const adminEmail = 'admin@quizplatform.com';
   const existingAdmin = await prisma.admin.findUnique({
