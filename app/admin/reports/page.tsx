@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { useToast } from '@/components/ui/Toast';
+import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 import {
   FileSpreadsheet,
   FileText,
@@ -23,6 +24,7 @@ import {
   ShieldAlert,
   Sparkles,
   Edit3,
+  Trash2,
 } from 'lucide-react';
 
 interface ColumnConfig {
@@ -47,6 +49,12 @@ export default function ReportsCenterPage() {
   const [resultFilter, setResultFilter] = useState<'ALL' | 'PASS' | 'FAIL'>('ALL');
   const [flagFilter, setFlagFilter] = useState<'ALL' | 'FLAGGED'>('ALL');
   const [showColumnManager, setShowColumnManager] = useState(true);
+
+  // Deletion States
+  const [attemptToDelete, setAttemptToDelete] = useState<any | null>(null);
+  const [deletingAttempt, setDeletingAttempt] = useState(false);
+  const [quizToClearReports, setQuizToClearReports] = useState<any | null>(null);
+  const [clearingReports, setClearingReports] = useState(false);
 
   const { success, error } = useToast();
 
@@ -265,6 +273,64 @@ export default function ReportsCenterPage() {
     }
   };
 
+  // 8. Delete Individual Student Attempt Report
+  const handleDeleteAttempt = async () => {
+    if (!attemptToDelete) return;
+    setDeletingAttempt(true);
+    try {
+      const res = await fetch(`/api/admin/attempts/${attemptToDelete.id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (res.ok) {
+        success(`Report for "${attemptToDelete.studentName || attemptToDelete.registerNumber || 'Student'}" deleted.`);
+        if (quizDetails) {
+          setQuizDetails((prev: any) => ({
+            ...prev,
+            attempts: prev.attempts.filter((a: any) => a.id !== attemptToDelete.id),
+          }));
+        }
+        setAttemptToDelete(null);
+        fetchQuizzesList();
+      } else {
+        error(data.error || 'Failed to delete report');
+      }
+    } catch {
+      error('An error occurred deleting report');
+    } finally {
+      setDeletingAttempt(false);
+    }
+  };
+
+  // 9. Clear All Reports / Submissions for a Quiz
+  const handleClearQuizReports = async () => {
+    if (!quizToClearReports) return;
+    setClearingReports(true);
+    try {
+      const res = await fetch(`/api/admin/quizzes/${quizToClearReports.id}/attempts`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (res.ok) {
+        success(data.message || 'All report submissions cleared successfully!');
+        if (selectedQuizId === quizToClearReports.id && quizDetails) {
+          setQuizDetails((prev: any) => ({
+            ...prev,
+            attempts: [],
+          }));
+        }
+        setQuizToClearReports(null);
+        fetchQuizzesList();
+      } else {
+        error(data.error || 'Failed to clear reports');
+      }
+    } catch {
+      error('An error occurred clearing reports');
+    } finally {
+      setClearingReports(false);
+    }
+  };
+
   // Filter quizzes in the list view
   const filteredQuizList = quizzes.filter(
     (q) =>
@@ -342,9 +408,24 @@ export default function ReportsCenterPage() {
                         <span className="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
                           {quiz.subject || 'Assessment'}
                         </span>
-                        <span className="font-mono text-xs font-bold text-slate-500 group-hover:text-emerald-600 transition">
-                          {quiz.publicCode}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-bold text-slate-500 group-hover:text-emerald-600 transition">
+                            {quiz.publicCode}
+                          </span>
+                          {(quiz._count?.attempts || 0) > 0 && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setQuizToClearReports(quiz);
+                              }}
+                              title="Clear all submissions for this quiz"
+                              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition opacity-0 group-hover:opacity-100"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition leading-snug">
@@ -406,6 +487,17 @@ export default function ReportsCenterPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                {(quizDetails?.attempts?.length || 0) > 0 && (
+                  <button
+                    onClick={() => setQuizToClearReports(quizDetails)}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs font-bold text-rose-600 dark:text-rose-400 transition shadow-sm"
+                    title="Delete all submission reports for this assessment"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Clear Submissions</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => setShowColumnManager(!showColumnManager)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
@@ -638,6 +730,9 @@ export default function ReportsCenterPage() {
                                 {String.fromCharCode(65 + (i % 26))}
                               </th>
                             ))}
+                            <th className="w-14 px-2 py-1 text-center font-bold uppercase border-r border-slate-200 dark:border-slate-700">
+                              ACT
+                            </th>
                           </tr>
 
                           {/* Customized Column Headers Row */}
@@ -653,6 +748,9 @@ export default function ReportsCenterPage() {
                                 <span>{col.customLabel || col.defaultLabel}</span>
                               </th>
                             ))}
+                            <th className="w-14 px-2 py-2.5 text-center whitespace-nowrap border-r border-emerald-100 dark:border-slate-700 text-xs font-bold text-slate-500 uppercase tracking-tight">
+                              Action
+                            </th>
                           </tr>
                         </thead>
 
@@ -745,6 +843,18 @@ export default function ReportsCenterPage() {
                                   </td>
                                 );
                               })}
+
+                              {/* Action: Delete Student Attempt Report */}
+                              <td className="w-14 px-2 py-2 text-center whitespace-nowrap border-r border-slate-100 dark:border-slate-800">
+                                <button
+                                  type="button"
+                                  onClick={() => setAttemptToDelete(att)}
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                                  title={`Delete report for ${att.studentName || att.registerNumber || 'Student'}`}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -778,6 +888,29 @@ export default function ReportsCenterPage() {
           </div>
         )}
       </div>
+
+      {/* Confirmation Dialogs */}
+      <ConfirmationDialog
+        isOpen={!!attemptToDelete}
+        onClose={() => setAttemptToDelete(null)}
+        onConfirm={handleDeleteAttempt}
+        isLoading={deletingAttempt}
+        isDangerous={true}
+        title="Delete Student Report"
+        message={`Are you sure you want to delete the submission report for "${attemptToDelete?.studentName || attemptToDelete?.registerNumber || 'this student'}"? This will permanently remove their score, answer sheet, and violation records.`}
+        confirmText="Delete Report"
+      />
+
+      <ConfirmationDialog
+        isOpen={!!quizToClearReports}
+        onClose={() => setQuizToClearReports(null)}
+        onConfirm={handleClearQuizReports}
+        isLoading={clearingReports}
+        isDangerous={true}
+        title="Clear All Submissions"
+        message={`Are you sure you want to clear all student submissions for "${quizToClearReports?.title}"? All submitted scores, answer sheets, and violation logs will be permanently deleted.`}
+        confirmText="Clear All Submissions"
+      />
     </div>
   );
 }
