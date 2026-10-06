@@ -12,10 +12,10 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ title, subtitle, actions }: AdminHeaderProps) {
   return (
-    <header className="sticky top-0 z-20 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-3 sm:py-4 shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-sm">
+    <header className="sticky top-0 z-20 bg-[#17062b]/95 backdrop-blur-md border-b border-purple-900/30 px-4 sm:px-6 py-3 sm:py-4 shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-sm text-white">
       <div className="min-w-0 flex-1">
-        <h1 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight truncate">{title}</h1>
-        {subtitle && <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{subtitle}</p>}
+        <h1 className="text-lg sm:text-2xl font-bold text-white tracking-tight truncate">{title}</h1>
+        {subtitle && <p className="text-[11px] sm:text-xs text-purple-300/70 mt-0.5 line-clamp-2">{subtitle}</p>}
       </div>
 
       {actions && (

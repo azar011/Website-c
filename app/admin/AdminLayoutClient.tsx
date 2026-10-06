@@ -108,10 +108,10 @@ export function AdminLayoutClient({ children, admin }: AdminLayoutClientProps) {
     const isMainMasterPage = pathname === '/admin/users';
 
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+      <div className="min-h-screen bg-[#0f041d] text-slate-100 flex flex-col">
         {/* If Master Admin navigates to any subpage (like quiz responses), provide persistent top bar with Back to Master Admin Dashboard */}
         {!isMainMasterPage && (
-          <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3 flex items-center justify-between shadow-lg">
+          <header className="sticky top-0 z-50 bg-[#17062b]/95 backdrop-blur-md border-b border-purple-900/30 px-4 sm:px-6 py-3 flex items-center justify-between shadow-lg">
             <div className="flex items-center gap-3">
               <Link
                 href="/admin/users"
@@ -120,14 +120,14 @@ export function AdminLayoutClient({ children, admin }: AdminLayoutClientProps) {
                 <ArrowLeft className="w-4 h-4 shrink-0" />
                 <span className="truncate">← Master Admin</span>
               </Link>
-              <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
+              <div className="hidden md:flex items-center gap-2 text-xs text-purple-300/70">
                 <span>•</span>
                 <span className="text-purple-300 font-semibold">Master Admin Inspection Mode</span>
               </div>
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="hidden sm:inline text-xs text-slate-400 font-mono truncate max-w-[180px]">
+              <span className="hidden sm:inline text-xs text-purple-300/60 font-mono truncate max-w-[180px]">
                 {adminEmail || 'azar.admin@gmail.com'}
               </span>
               <button
@@ -150,13 +150,13 @@ export function AdminLayoutClient({ children, admin }: AdminLayoutClientProps) {
 
   // For Standard User Admin: Regular layout with responsive sidebar + mobile header
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#0f041d] dark:bg-[#0f041d] text-slate-100">
       {/* Mobile Top Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 text-white shrink-0 z-30">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#17062b] border-b border-purple-900/30 text-white shrink-0 z-30">
         <button
           type="button"
           onClick={() => setIsMobileSidebarOpen(true)}
-          className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+          className="p-2 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 border border-purple-800/40 text-purple-200 transition"
           aria-label="Open Navigation Menu"
         >
           <Menu className="w-5 h-5" />

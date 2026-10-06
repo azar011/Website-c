@@ -60,20 +60,6 @@ export default function AdminLoginPage() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[350px] bg-purple-600/15 blur-[130px] pointer-events-none rounded-full" />
       <div className="absolute bottom-10 right-10 w-[300px] h-[300px] bg-indigo-600/10 blur-[100px] pointer-events-none rounded-full" />
 
-      {/* Subtle diamond sparkle star in bottom right */}
-      <div className="fixed bottom-10 right-10 pointer-events-none opacity-20 hidden sm:block">
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="text-purple-300 animate-pulse"
-          style={{ animationDuration: '4s' }}
-        >
-          <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z" />
-        </svg>
-      </div>
-
       {/* Brand Header */}
       <div className="flex flex-col items-center mb-7 sm:mb-8 text-center z-10">
         <div className="relative w-36 h-28 sm:w-44 sm:h-32 mb-1.5 flex items-center justify-center">
