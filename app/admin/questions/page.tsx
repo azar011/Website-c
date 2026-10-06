@@ -79,10 +79,10 @@ export default function QuestionBankPage() {
       negativeMarks: 0.0,
       explanation: '',
       options: [
-        { optionText: 'Option 1', isCorrect: true, orderIndex: 0 },
-        { optionText: 'Option 2', isCorrect: false, orderIndex: 1 },
-        { optionText: 'Option 3', isCorrect: false, orderIndex: 2 },
-        { optionText: 'Option 4', isCorrect: false, orderIndex: 3 },
+        { optionText: '', isCorrect: true, orderIndex: 0 },
+        { optionText: '', isCorrect: false, orderIndex: 1 },
+        { optionText: '', isCorrect: false, orderIndex: 2 },
+        { optionText: '', isCorrect: false, orderIndex: 3 },
       ],
     });
     setShowEditorModal(true);
@@ -415,6 +415,7 @@ export default function QuestionBankPage() {
                     />
                     <input
                       type="text"
+                      placeholder={`Option ${optIdx + 1}`}
                       value={opt.optionText}
                       onChange={(e) => {
                         const opts = [...editingQuestion.options];

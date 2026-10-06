@@ -81,10 +81,10 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
       orderIndex: questions.length,
       difficulty: 'MEDIUM',
       options: [
-        { optionText: 'Option 1', isCorrect: true, orderIndex: 0 },
-        { optionText: 'Option 2', isCorrect: false, orderIndex: 1 },
-        { optionText: 'Option 3', isCorrect: false, orderIndex: 2 },
-        { optionText: 'Option 4', isCorrect: false, orderIndex: 3 },
+        { optionText: '', isCorrect: true, orderIndex: 0 },
+        { optionText: '', isCorrect: false, orderIndex: 1 },
+        { optionText: '', isCorrect: false, orderIndex: 2 },
+        { optionText: '', isCorrect: false, orderIndex: 3 },
       ],
     };
     setQuestions([...questions, newQ]);

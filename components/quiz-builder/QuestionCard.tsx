@@ -91,13 +91,13 @@ export function QuestionCard({
       ];
     } else if (['MCQ', 'MULTIPLE_SELECT'].includes(newType) && newOptions.length === 0) {
       newOptions = [
-        { optionText: 'Option 1', isCorrect: true, orderIndex: 0 },
-        { optionText: 'Option 2', isCorrect: false, orderIndex: 1 },
+        { optionText: '', isCorrect: true, orderIndex: 0 },
+        { optionText: '', isCorrect: false, orderIndex: 1 },
       ];
     } else if (newType === 'MATCHING' && newOptions.length === 0) {
       newOptions = [
-        { optionText: 'Item 1', matchTarget: 'Match Target 1', isCorrect: true, orderIndex: 0 },
-        { optionText: 'Item 2', matchTarget: 'Match Target 2', isCorrect: true, orderIndex: 1 },
+        { optionText: '', matchTarget: '', isCorrect: true, orderIndex: 0 },
+        { optionText: '', matchTarget: '', isCorrect: true, orderIndex: 1 },
       ];
     }
     onChange({ ...question, type: newType, options: newOptions });
@@ -131,10 +131,10 @@ export function QuestionCard({
   const handleAddOption = () => {
     const nextIdx = question.options.length;
     const newOpt: QuestionOptionData = {
-      optionText: `Option ${nextIdx + 1}`,
+      optionText: '',
       isCorrect: false,
       orderIndex: nextIdx,
-      matchTarget: question.type === 'MATCHING' ? `Target ${nextIdx + 1}` : null,
+      matchTarget: question.type === 'MATCHING' ? '' : null,
     };
     onChange({ ...question, options: [...question.options, newOpt] });
   };
