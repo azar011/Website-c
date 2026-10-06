@@ -9,10 +9,11 @@ export async function POST(
   const { publicCode } = await params;
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
 
-  const rateCheck = checkRateLimit(`start_${ip}`, 30, 60000);
+  // Allow up to 1000 starts per minute per IP to support large batches of students on shared institutional/lab Wi-Fi networks
+  const rateCheck = checkRateLimit(`start_${ip}`, 1000, 60000);
   if (!rateCheck.allowed) {
     return NextResponse.json(
-      { error: `Too many requests. Please wait ${rateCheck.resetIn} seconds.` },
+      { error: `Too many requests from this network. Please wait ${rateCheck.resetIn} seconds.` },
       { status: 429 }
     );
   }
