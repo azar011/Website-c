@@ -19,7 +19,11 @@ export const metadata: Metadata = {
   },
   description: "Comprehensive online assessment, quiz creation, and anti-cheating examination platform.",
   icons: {
-    icon: "/icon.png",
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico" }
+    ],
+    shortcut: "/favicon.ico",
     apple: "/icon.png",
   },
 };
