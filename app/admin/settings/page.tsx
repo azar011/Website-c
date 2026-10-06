@@ -948,7 +948,7 @@ export default function AdminSettingsPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                 >
                   Cancel
                 </button>
@@ -1041,7 +1041,7 @@ export default function AdminSettingsPage() {
                 <button
                   type="button"
                   onClick={() => setEditAdmin(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                 >
                   Cancel
                 </button>

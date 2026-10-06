@@ -278,7 +278,7 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
           <div className="flex items-center gap-2">
             <Link
               href="/admin/quizzes"
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white"
+              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition"
               title="Back to Quizzes"
             >
               <ArrowLeft className="w-4 h-4" />

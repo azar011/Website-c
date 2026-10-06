@@ -160,7 +160,7 @@ export function QuestionImportModal({
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'csv'
                 ? 'bg-indigo-600 text-white shadow-sm'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
             }`}
           >
             CSV Format
@@ -174,7 +174,7 @@ export function QuestionImportModal({
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'json'
                 ? 'bg-indigo-600 text-white shadow-sm'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
             }`}
           >
             JSON Format
@@ -230,7 +230,7 @@ export function QuestionImportModal({
             type="button"
             onClick={handleValidate}
             disabled={loading}
-            className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 transition flex items-center gap-1.5"
+            className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1.5"
           >
             {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             <span>Validate First</span>

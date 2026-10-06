@@ -479,7 +479,7 @@ export function QuestionCard({
             className={`text-xs font-medium px-2.5 py-1 rounded-lg border transition ${
               showDescription
                 ? 'border-indigo-300 text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40'
-                : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-800'
+                : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             {showDescription ? 'Hide Description' : '+ Add Description'}
@@ -491,7 +491,7 @@ export function QuestionCard({
             className={`text-xs font-medium px-2.5 py-1 rounded-lg border transition ${
               showExplanation
                 ? 'border-amber-300 text-amber-600 bg-amber-50 dark:bg-amber-950/40'
-                : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-800'
+                : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
             }`}
           >
             {showExplanation ? 'Hide Explanation' : '+ Explanation'}

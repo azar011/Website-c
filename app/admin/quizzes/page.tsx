@@ -156,7 +156,7 @@ export default function AllQuizzesPage() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                   statusFilter === st
                     ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {st === 'ALL' ? 'All Quizzes' : st}
@@ -307,7 +307,7 @@ export default function AllQuizzesPage() {
                           <button
                             onClick={() => setQrModalQuiz(quiz)}
                             title="Share & QR Code"
-                            className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                            className="p-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition"
                           >
                             <Share2 className="w-4 h-4" />
                           </button>
@@ -316,7 +316,7 @@ export default function AllQuizzesPage() {
                           <Link
                             href={`/admin/quizzes/${quiz.id}/edit`}
                             title="Edit Quiz"
-                            className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
@@ -325,7 +325,7 @@ export default function AllQuizzesPage() {
                           <Link
                             href={`/admin/quizzes/${quiz.id}/preview`}
                             title="Student Preview"
-                            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
@@ -334,7 +334,7 @@ export default function AllQuizzesPage() {
                           <Link
                             href={`/admin/quizzes/${quiz.id}/responses`}
                             title="View Responses"
-                            className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
                           >
                             <FileSpreadsheet className="w-4 h-4" />
                           </Link>
@@ -343,7 +343,7 @@ export default function AllQuizzesPage() {
                           <Link
                             href={`/admin/quizzes/${quiz.id}/analytics`}
                             title="View Analytics"
-                            className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
                           >
                             <BarChart2 className="w-4 h-4" />
                           </Link>
@@ -352,7 +352,7 @@ export default function AllQuizzesPage() {
                           <button
                             onClick={() => handleDuplicate(quiz.id)}
                             title="Duplicate Quiz"
-                            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
                           >
                             <Copy className="w-4 h-4" />
                           </button>
@@ -361,7 +361,7 @@ export default function AllQuizzesPage() {
                           <button
                             onClick={() => setDeleteQuizTarget(quiz)}
                             title="Delete Quiz"
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

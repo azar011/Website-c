@@ -59,6 +59,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  ::selection {
+    background-color: #6366f1;
+    color: #ffffff;
+  }
+
   /* Global form control contrast rules */
   input, textarea, select {
     color: var(--foreground);

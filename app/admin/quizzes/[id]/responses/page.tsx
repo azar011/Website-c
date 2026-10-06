@@ -347,7 +347,7 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
                           <button
                             type="button"
                             onClick={() => viewAttemptDetail(att.id)}
-                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold text-[11px] hover:bg-indigo-100 transition"
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold text-[11px] hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition"
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span>Review</span>
@@ -356,7 +356,7 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
                           <button
                             type="button"
                             onClick={() => setDeleteAttemptTarget(att)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
                             title="Delete Attempt"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

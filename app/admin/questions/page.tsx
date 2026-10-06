@@ -308,7 +308,7 @@ export default function QuestionBankPage() {
                       setEditingQuestion(q);
                       setShowEditorModal(true);
                     }}
-                    className="p-2 text-slate-500 hover:text-indigo-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                    className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                     title="Edit Question"
                   >
                     <Edit className="w-4 h-4" />
@@ -316,7 +316,7 @@ export default function QuestionBankPage() {
                   <button
                     type="button"
                     onClick={() => setDeleteTarget(q)}
-                    className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition"
+                    className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
                     title="Delete Question"
                   >
                     <Trash2 className="w-4 h-4" />

@@ -40,7 +40,7 @@ export function QuizSettingsTabs({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition shrink-0 ${
             activeTab === 'general'
               ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Clock className="w-4 h-4" />
@@ -53,7 +53,7 @@ export function QuizSettingsTabs({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition shrink-0 ${
             activeTab === 'responses'
               ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <UserCheck className="w-4 h-4" />
@@ -66,7 +66,7 @@ export function QuizSettingsTabs({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition shrink-0 ${
             activeTab === 'anticheat'
               ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <ShieldAlert className="w-4 h-4" />
@@ -79,7 +79,7 @@ export function QuizSettingsTabs({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition shrink-0 ${
             activeTab === 'results'
               ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
           <Eye className="w-4 h-4" />
