@@ -164,7 +164,7 @@ export default function QuestionBankPage() {
             <button
               type="button"
               onClick={handleOpenCreate}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow transition"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#6e38f7] hover:bg-[#7b46fa] text-white text-xs font-semibold shadow-md shadow-purple-900/40 transition"
             >
               <Plus className="w-4 h-4" />
               <span>Add Question</span>

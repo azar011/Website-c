@@ -95,7 +95,7 @@ export default function AdminDashboardPage() {
             )}
             <Link
               href="/admin/quizzes/new"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#6e38f7] hover:bg-[#7b46fa] text-white text-xs font-semibold shadow-md shadow-purple-900/40 transition"
             >
               <PlusCircle className="w-4 h-4" />
               <span>New Quiz</span>
