@@ -14,14 +14,17 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get('search');
 
   const whereClause: any = {};
+  if (admin.role !== 'SUPER_ADMIN') {
+    whereClause.adminId = admin.adminId;
+  }
   if (status && status !== 'ALL') {
     whereClause.status = status;
   }
   if (search) {
     whereClause.OR = [
-      { title: { contains: search } },
-      { subject: { contains: search } },
-      { publicCode: { contains: search } },
+      { title: { contains: search, mode: 'insensitive' } },
+      { subject: { contains: search, mode: 'insensitive' } },
+      { publicCode: { contains: search, mode: 'insensitive' } },
     ];
   }
 

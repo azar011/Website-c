@@ -57,7 +57,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const [quiz, attempts, classes, departments] = await Promise.all([
       prisma.quiz.findUnique({
         where: { id: quizId },
-        select: { id: true, title: true, publicCode: true, passingPercentage: true },
+        select: { id: true, title: true, publicCode: true, passingPercentage: true, adminId: true },
       }),
       prisma.attempt.findMany({
         where: whereClause,
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       }),
     ]);
 
-    if (!quiz) {
+    if (!quiz || (admin.role !== 'SUPER_ADMIN' && quiz.adminId !== admin.adminId)) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 

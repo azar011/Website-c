@@ -13,10 +13,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const quiz = await prisma.quiz.findUnique({
       where: { id: quizId },
-      select: { id: true, title: true },
+      select: { id: true, title: true, adminId: true },
     });
 
-    if (!quiz) {
+    if (!quiz || (admin.role !== 'SUPER_ADMIN' && quiz.adminId !== admin.adminId)) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 

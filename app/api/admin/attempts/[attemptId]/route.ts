@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ atte
       },
     });
 
-    if (!attempt) {
+    if (!attempt || (admin.role !== 'SUPER_ADMIN' && attempt.quiz.adminId !== admin.adminId)) {
       return NextResponse.json({ error: 'Attempt not found' }, { status: 404 });
     }
 
@@ -58,8 +58,16 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ a
   const { attemptId } = await params;
 
   try {
-    const attempt = await prisma.attempt.findUnique({ where: { id: attemptId } });
-    if (!attempt) {
+    const attempt = await prisma.attempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        quiz: {
+          select: { adminId: true },
+        },
+      },
+    });
+
+    if (!attempt || (admin.role !== 'SUPER_ADMIN' && attempt.quiz.adminId !== admin.adminId)) {
       return NextResponse.json({ error: 'Attempt not found' }, { status: 404 });
     }
 

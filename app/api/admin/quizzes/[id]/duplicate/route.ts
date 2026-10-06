@@ -23,7 +23,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
     });
 
-    if (!original) {
+    if (!original || (admin.role !== 'SUPER_ADMIN' && original.adminId !== admin.adminId)) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 

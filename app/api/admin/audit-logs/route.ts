@@ -12,7 +12,13 @@ export async function GET(req: NextRequest) {
   const limit = parseInt(searchParams.get('limit') || '50');
 
   try {
+    const whereClause: any = {};
+    if (admin.role !== 'SUPER_ADMIN') {
+      whereClause.adminId = admin.adminId;
+    }
+
     const logs = await prisma.auditLog.findMany({
+      where: whereClause,
       take: limit,
       orderBy: { createdAt: 'desc' },
       include: {

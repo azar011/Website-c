@@ -12,7 +12,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     const quiz = await prisma.quiz.findUnique({ where: { id: quizId } });
-    if (!quiz) {
+    if (!quiz || (admin.role !== 'SUPER_ADMIN' && quiz.adminId !== admin.adminId)) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 
@@ -21,11 +21,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: 'No question IDs provided' }, { status: 400 });
     }
 
+    const bankWhere: any = {
+      id: { in: questionBankIds },
+      isQuestionBank: true,
+    };
+    if (admin.role !== 'SUPER_ADMIN') {
+      bankWhere.OR = [
+        { adminId: admin.adminId },
+        { adminId: null },
+      ];
+    }
+
     const bankQuestions = await prisma.question.findMany({
-      where: {
-        id: { in: questionBankIds },
-        isQuestionBank: true,
-      },
+      where: bankWhere,
       include: {
         options: true,
       },
@@ -45,6 +53,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       const cloned = await prisma.question.create({
         data: {
           quizId,
+          adminId: admin.adminId,
           questionText: bq.questionText,
           description: bq.description,
           type: bq.type,

@@ -9,6 +9,10 @@ export async function GET() {
   }
 
   try {
+    const isSuperAdmin = admin.role === 'SUPER_ADMIN';
+    const quizWhere: any = isSuperAdmin ? {} : { adminId: admin.adminId };
+    const attemptWhere: any = isSuperAdmin ? {} : { quiz: { adminId: admin.adminId } };
+
     const [
       totalQuizzes,
       publishedQuizzes,
@@ -17,11 +21,12 @@ export async function GET() {
       allAttempts,
       recentQuizzes,
     ] = await Promise.all([
-      prisma.quiz.count(),
-      prisma.quiz.count({ where: { status: 'PUBLISHED' } }),
-      prisma.quiz.count({ where: { status: 'DRAFT' } }),
-      prisma.quiz.count({ where: { status: 'CLOSED' } }),
+      prisma.quiz.count({ where: quizWhere }),
+      prisma.quiz.count({ where: { ...quizWhere, status: 'PUBLISHED' } }),
+      prisma.quiz.count({ where: { ...quizWhere, status: 'DRAFT' } }),
+      prisma.quiz.count({ where: { ...quizWhere, status: 'CLOSED' } }),
       prisma.attempt.findMany({
+        where: attemptWhere,
         select: {
           id: true,
           status: true,
@@ -33,6 +38,7 @@ export async function GET() {
         },
       }),
       prisma.quiz.findMany({
+        where: quizWhere,
         take: 5,
         orderBy: { updatedAt: 'desc' },
         include: {

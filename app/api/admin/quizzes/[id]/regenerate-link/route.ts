@@ -13,7 +13,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     const quiz = await prisma.quiz.findUnique({ where: { id } });
-    if (!quiz) {
+    if (!quiz || (admin.role !== 'SUPER_ADMIN' && quiz.adminId !== admin.adminId)) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 

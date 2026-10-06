@@ -15,6 +15,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'questionIds must be an array' }, { status: 400 });
     }
 
+    if (admin.role !== 'SUPER_ADMIN') {
+      const forbiddenQuestions = await prisma.question.findMany({
+        where: {
+          id: { in: questionIds },
+          OR: [
+            { quiz: { adminId: { not: admin.adminId } } },
+            { quizId: null, adminId: { not: admin.adminId } },
+          ],
+        },
+        select: { id: true },
+      });
+      if (forbiddenQuestions.length > 0) {
+        return NextResponse.json({ error: 'Unauthorized to modify these questions' }, { status: 403 });
+      }
+    }
+
     // Update orderIndex in transaction
     await prisma.$transaction(
       questionIds.map((id: string, index: number) =>

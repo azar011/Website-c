@@ -14,27 +14,40 @@ export async function GET(req: NextRequest) {
   const difficulty = searchParams.get('difficulty');
   const type = searchParams.get('type');
 
-  const whereClause: any = { isQuestionBank: true };
+  const andConditions: any[] = [{ isQuestionBank: true }];
+
+  if (admin.role !== 'SUPER_ADMIN') {
+    andConditions.push({
+      OR: [
+        { adminId: admin.adminId },
+        { adminId: null },
+      ],
+    });
+  }
 
   if (search) {
-    whereClause.OR = [
-      { questionText: { contains: search } },
-      { topic: { contains: search } },
-      { subject: { contains: search } },
-    ];
+    andConditions.push({
+      OR: [
+        { questionText: { contains: search, mode: 'insensitive' } },
+        { topic: { contains: search, mode: 'insensitive' } },
+        { subject: { contains: search, mode: 'insensitive' } },
+      ],
+    });
   }
 
   if (subject && subject !== 'ALL') {
-    whereClause.subject = subject;
+    andConditions.push({ subject });
   }
 
   if (difficulty && difficulty !== 'ALL') {
-    whereClause.difficulty = difficulty;
+    andConditions.push({ difficulty });
   }
 
   if (type && type !== 'ALL') {
-    whereClause.type = type;
+    andConditions.push({ type });
   }
+
+  const whereClause: any = { AND: andConditions };
 
   try {
     const questions = await prisma.question.findMany({
@@ -49,7 +62,7 @@ export async function GET(req: NextRequest) {
 
     // Also get list of distinct subjects for filters
     const subjects = await prisma.question.findMany({
-      where: { isQuestionBank: true, subject: { not: null } },
+      where: whereClause,
       select: { subject: true },
       distinct: ['subject'],
     });
@@ -93,6 +106,7 @@ export async function POST(req: NextRequest) {
 
     const question = await prisma.question.create({
       data: {
+        adminId: admin.adminId,
         questionText: questionText.trim(),
         description: description?.trim() || null,
         type,

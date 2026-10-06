@@ -13,11 +13,19 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const existing = await prisma.question.findUnique({
       where: { id },
-      include: { options: true },
+      include: {
+        options: true,
+        quiz: { select: { adminId: true } },
+      },
     });
 
     if (!existing) {
       return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+    }
+
+    const ownerAdminId = existing.quiz?.adminId || existing.adminId;
+    if (admin.role !== 'SUPER_ADMIN' && ownerAdminId && ownerAdminId !== admin.adminId) {
+      return NextResponse.json({ error: 'Unauthorized to modify this question' }, { status: 403 });
     }
 
     const body = await req.json();
@@ -105,9 +113,20 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params;
 
   try {
-    const question = await prisma.question.findUnique({ where: { id } });
+    const question = await prisma.question.findUnique({
+      where: { id },
+      include: {
+        quiz: { select: { adminId: true } },
+      },
+    });
+
     if (!question) {
       return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+    }
+
+    const ownerAdminId = question.quiz?.adminId || question.adminId;
+    if (admin.role !== 'SUPER_ADMIN' && ownerAdminId && ownerAdminId !== admin.adminId) {
+      return NextResponse.json({ error: 'Unauthorized to delete this question' }, { status: 403 });
     }
 
     await prisma.question.delete({ where: { id } });

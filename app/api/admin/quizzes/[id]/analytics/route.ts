@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSessionAdmin } from '@/lib/auth';
 import { getQuizAnalytics } from '@/lib/analytics';
 
+import prisma from '@/lib/db';
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const admin = await getSessionAdmin();
   if (!admin) {
@@ -11,6 +13,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
 
   try {
+    const quiz = await prisma.quiz.findUnique({
+      where: { id },
+      select: { id: true, adminId: true },
+    });
+
+    if (!quiz || (admin.role !== 'SUPER_ADMIN' && quiz.adminId !== admin.adminId)) {
+      return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
+    }
+
     const analytics = await getQuizAnalytics(id);
     if (!analytics) {
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });

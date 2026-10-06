@@ -15,6 +15,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No question data provided' }, { status: 400 });
     }
 
+    if (quizId) {
+      const targetQuiz = await prisma.quiz.findUnique({
+        where: { id: quizId },
+        select: { id: true, adminId: true },
+      });
+      if (!targetQuiz || (admin.role !== 'SUPER_ADMIN' && targetQuiz.adminId !== admin.adminId)) {
+        return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
+      }
+    }
+
     const validQuestions: any[] = [];
     const invalidQuestions: any[] = [];
     const errors: string[] = [];
@@ -129,6 +139,7 @@ export async function POST(req: NextRequest) {
       const created = await prisma.question.create({
         data: {
           quizId: quizId || null,
+          adminId: admin.adminId,
           questionText: vq.questionText,
           description: vq.description,
           type: vq.type,
