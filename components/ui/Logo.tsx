@@ -34,7 +34,7 @@ export function Logo({
           alt="XamPlus Logo"
           width={currentSize.img}
           height={currentSize.img}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain drop-shadow-md"
           priority
         />
       </div>
@@ -49,7 +49,7 @@ export function Logo({
           alt="XamPlus Logo"
           width={currentSize.img}
           height={currentSize.img}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain drop-shadow-md"
           priority
         />
       </div>
