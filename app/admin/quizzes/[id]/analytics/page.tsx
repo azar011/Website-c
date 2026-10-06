@@ -60,15 +60,15 @@ export default function QuizAnalyticsPage({ params }: { params: Promise<{ id: st
           <div className="flex items-center gap-2">
             <Link
               href={`/admin/quizzes/${id}/responses`}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 text-xs font-semibold text-slate-700 dark:text-slate-200 transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-purple-100 hover:text-white border border-white/15 text-xs font-semibold transition shadow-sm"
             >
-              <Users className="w-4 h-4" />
+              <Users className="w-4 h-4 text-purple-300" />
               <span>Responses</span>
             </Link>
 
             <a
               href={`/api/admin/quizzes/${id}/reports/excel`}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-900/30 transition"
             >
               <FileSpreadsheet className="w-4 h-4" />
               <span>Excel Report</span>

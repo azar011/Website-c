@@ -352,7 +352,7 @@ export default function ReportsCenterPage() {
           selectedQuizId ? (
             <button
               onClick={() => setSelectedQuizId(null)}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 transition shadow-sm"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-purple-100 hover:text-white border border-white/15 text-xs font-bold transition shadow-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to All Quizzes</span>

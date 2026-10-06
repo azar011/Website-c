@@ -145,7 +145,7 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
           <div className="flex items-center gap-2">
             <Link
               href={currentUserRole === 'SUPER_ADMIN' ? '/admin/users' : `/admin/quizzes/${id}/edit`}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold transition"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-purple-100 hover:text-white border border-white/15 text-xs font-bold transition shadow-sm"
               title={currentUserRole === 'SUPER_ADMIN' ? 'Back to Master Admin Dashboard' : 'Back to Editor'}
             >
               <ArrowLeft className="w-4 h-4" />
@@ -155,16 +155,16 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
             <button
               type="button"
               onClick={downloadCSV}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 transition"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-purple-100 hover:text-white border border-white/15 text-xs font-semibold transition shadow-sm"
             >
-              <FileText className="w-3.5 h-3.5 text-blue-500" />
+              <FileText className="w-3.5 h-3.5 text-purple-300" />
               <span>Export CSV</span>
             </button>
 
             <button
               type="button"
               onClick={downloadExcel}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-900/30 transition"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>Download Excel (Multi-Sheet)</span>

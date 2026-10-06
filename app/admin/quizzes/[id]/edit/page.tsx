@@ -278,7 +278,7 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
           <div className="flex items-center gap-2">
             <Link
               href="/admin/quizzes"
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-purple-100 hover:text-white border border-white/15 transition"
               title="Back to Quizzes"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -286,18 +286,18 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
 
             <Link
               href={`/admin/quizzes/${id}/preview`}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-purple-100 hover:text-white border border-white/15 text-xs font-semibold transition shadow-sm"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-4 h-4 text-purple-300" />
               <span>Student Preview</span>
             </Link>
 
             <button
               type="button"
               onClick={() => setShowQrModal(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-xs font-semibold hover:bg-indigo-100 transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 hover:text-white border border-purple-400/30 text-xs font-semibold transition shadow-sm"
             >
-              <Share2 className="w-4 h-4" />
+              <Share2 className="w-4 h-4 text-purple-300" />
               <span>Share & QR</span>
             </button>
 
@@ -305,7 +305,7 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
               type="button"
               onClick={() => handleSaveAll(true)}
               disabled={saving}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow transition disabled:opacity-50 dark:bg-slate-800 dark:hover:bg-slate-700"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#6e38f7] hover:bg-[#7b46fa] text-white text-xs font-semibold shadow-md shadow-purple-900/40 transition disabled:opacity-50"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               <span>Save</span>
@@ -315,7 +315,7 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow transition"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold shadow-md shadow-amber-900/30 transition"
                 title="Close quiz (Stop accepting student submissions)"
               >
                 <XCircle className="w-4 h-4" />
@@ -325,7 +325,7 @@ export default function QuizEditorPage({ params }: { params: Promise<{ id: strin
               <button
                 type="button"
                 onClick={handlePublish}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md shadow-emerald-600/20 transition"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-900/30 transition"
                 title={quiz.status === 'CLOSED' ? 'Re-publish assessment to open student responses' : 'Publish assessment'}
               >
                 <CheckCircle className="w-4 h-4" />

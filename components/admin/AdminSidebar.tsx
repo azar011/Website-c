@@ -211,7 +211,7 @@ export function AdminSidebar({
   return (
     <>
       {/* Desktop Persistent Sidebar */}
-      <aside className="hidden md:flex flex-col border-r border-purple-900/30 h-screen sticky top-0 shrink-0">
+      <aside className="hidden md:flex flex-col bg-[#17062b] border-r border-purple-900/30 h-screen sticky top-0 shrink-0 z-30">
         {sidebarContent}
       </aside>
 
