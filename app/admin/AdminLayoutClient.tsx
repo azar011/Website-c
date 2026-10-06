@@ -150,7 +150,7 @@ export function AdminLayoutClient({ children, admin }: AdminLayoutClientProps) {
 
   // For Standard User Admin: Regular layout with responsive sidebar + mobile header
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#0f041d] dark:bg-[#0f041d] text-slate-100">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-slate-50 text-slate-900">
       {/* Mobile Top Header */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#17062b] border-b border-purple-900/30 text-white shrink-0 z-30">
         <button
@@ -180,7 +180,7 @@ export function AdminLayoutClient({ children, admin }: AdminLayoutClientProps) {
         isOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
       />
-      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-slate-50 text-slate-900">
         {children}
       </main>
     </div>
