@@ -222,14 +222,14 @@ export default function StudentQuizStartPage({
                 Full Name <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
                   required
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="w-full text-xs pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  className="w-full text-xs pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500 transition"
                 />
               </div>
             </div>
@@ -241,14 +241,14 @@ export default function StudentQuizStartPage({
                 Register Number / Roll Number <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <Hash className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                <Hash className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
                   required
                   value={registerNumber}
                   onChange={(e) => setRegisterNumber(e.target.value)}
                   placeholder="e.g. 23CS101"
-                  className="w-full text-xs font-mono font-semibold pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  className="w-full text-xs font-mono font-semibold pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500 transition"
                 />
               </div>
             </div>
@@ -260,14 +260,14 @@ export default function StudentQuizStartPage({
                 Email Address <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@college.edu"
-                  className="w-full text-xs pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  className="w-full text-xs pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500 transition"
                 />
               </div>
             </div>
@@ -280,14 +280,14 @@ export default function StudentQuizStartPage({
                   Class / Batch <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <GraduationCap className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                  <GraduationCap className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                   <input
                     type="text"
                     required
                     value={studentClass}
                     onChange={(e) => setStudentClass(e.target.value)}
                     placeholder="e.g. 4th Sem A"
-                    className="w-full text-xs pl-10 pr-3 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full text-xs pl-10 pr-3 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>
@@ -299,14 +299,14 @@ export default function StudentQuizStartPage({
                   Department <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <Building className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                  <Building className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                   <input
                     type="text"
                     required
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
                     placeholder="e.g. Computer Science"
-                    className="w-full text-xs pl-10 pr-3 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full text-xs pl-10 pr-3 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               </div>

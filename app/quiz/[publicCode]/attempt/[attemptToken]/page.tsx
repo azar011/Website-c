@@ -626,7 +626,7 @@ export default function StudentLiveQuizPage({
                     value={answers[qId]?.textAnswer || ''}
                     onChange={(e) => handleTextAnswerChange(qId, e.target.value)}
                     placeholder="Type your answer here..."
-                    className="w-full text-sm font-medium px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full text-sm font-medium px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               )}
@@ -679,7 +679,7 @@ export default function StudentLiveQuizPage({
                     value={answers[qId]?.textAnswer || ''}
                     onChange={(e) => handleTextAnswerChange(qId, e.target.value)}
                     placeholder="Write detailed explanation..."
-                    className="w-full text-xs font-medium p-4 rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full text-xs font-medium p-4 rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               )}

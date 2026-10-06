@@ -317,11 +317,11 @@ export function QuestionCard({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-medium text-slate-500">Evaluation Method</label>
+                <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Evaluation Method</label>
                 <select
                   value={question.evaluationType || 'CASE_INSENSITIVE'}
                   onChange={(e) => onChange({ ...question, evaluationType: e.target.value })}
-                  className="w-full text-xs px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 mt-1 outline-none"
+                  className="w-full text-xs px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white mt-1 outline-none"
                 >
                   <option value="CASE_INSENSITIVE">Case Insensitive Match</option>
                   <option value="EXACT_MATCH">Exact Match (Case Sensitive)</option>
@@ -331,7 +331,7 @@ export function QuestionCard({
               </div>
 
               <div>
-                <label className="text-[11px] font-medium text-slate-500">
+                <label className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                   Accepted Answers / Keywords (comma separated)
                 </label>
                 <input
@@ -339,7 +339,7 @@ export function QuestionCard({
                   value={question.keywords || ''}
                   onChange={(e) => onChange({ ...question, keywords: e.target.value })}
                   placeholder="e.g. Python, python3, CPython"
-                  className="w-full text-xs px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 mt-1 outline-none"
+                  className="w-full text-xs px-3 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 mt-1 outline-none"
                 />
               </div>
             </div>
@@ -349,7 +349,7 @@ export function QuestionCard({
         {/* MATCHING PAIRS */}
         {question.type === 'MATCHING' && (
           <div className="space-y-2.5">
-            <div className="text-xs font-semibold text-slate-500 flex items-center justify-between">
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center justify-between">
               <span>Matching Pairs (Left Item ➔ Correct Right Target)</span>
             </div>
 
@@ -360,7 +360,7 @@ export function QuestionCard({
                   value={opt.optionText}
                   onChange={(e) => handleOptionTextChange(optIdx, e.target.value)}
                   placeholder={`Left Item ${optIdx + 1}`}
-                  className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"
+                  className="flex-1 text-xs px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 <span className="text-slate-400 font-bold">➔</span>
                 <input
@@ -368,7 +368,7 @@ export function QuestionCard({
                   value={opt.matchTarget || ''}
                   onChange={(e) => handleMatchTargetChange(optIdx, e.target.value)}
                   placeholder={`Match Target ${optIdx + 1}`}
-                  className="flex-1 text-xs px-3 py-2 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/40 dark:bg-indigo-950/20 text-slate-900 dark:text-white"
+                  className="flex-1 text-xs px-3 py-2 rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/40 dark:bg-indigo-950/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 {question.options.length > 2 && (
                   <button

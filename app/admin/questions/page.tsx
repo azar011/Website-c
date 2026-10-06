@@ -183,14 +183,14 @@ export default function QuestionBankPage() {
               placeholder="Search question bank..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full text-xs pl-10 pr-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full text-xs pl-10 pr-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 outline-none"
+            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none"
           >
             <option value="ALL">All Subjects</option>
             {subjects.map((s) => (
@@ -203,7 +203,7 @@ export default function QuestionBankPage() {
           <select
             value={selectedDifficulty}
             onChange={(e) => setSelectedDifficulty(e.target.value)}
-            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 outline-none"
+            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none"
           >
             <option value="ALL">All Difficulties</option>
             <option value="EASY">Easy</option>
@@ -214,7 +214,7 @@ export default function QuestionBankPage() {
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 outline-none"
+            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none"
           >
             <option value="ALL">All Question Types</option>
             <option value="MCQ">Multiple Choice</option>
@@ -338,7 +338,7 @@ export default function QuestionBankPage() {
         >
           <form onSubmit={handleSaveQuestion} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold mb-1">Question Text</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Question Text</label>
               <textarea
                 rows={2}
                 required
@@ -346,43 +346,43 @@ export default function QuestionBankPage() {
                 onChange={(e) =>
                   setEditingQuestion({ ...editingQuestion, questionText: e.target.value })
                 }
-                className="w-full text-xs p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full text-xs p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Subject</label>
+                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Subject</label>
                 <input
                   type="text"
                   value={editingQuestion.subject || ''}
                   onChange={(e) =>
                     setEditingQuestion({ ...editingQuestion, subject: e.target.value })
                   }
-                  className="w-full text-xs px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"
+                  className="w-full text-xs px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Topic</label>
+                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Topic</label>
                 <input
                   type="text"
                   value={editingQuestion.topic || ''}
                   onChange={(e) =>
                     setEditingQuestion({ ...editingQuestion, topic: e.target.value })
                   }
-                  className="w-full text-xs px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"
+                  className="w-full text-xs px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-500 mb-1">Difficulty</label>
+                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Difficulty</label>
                 <select
                   value={editingQuestion.difficulty || 'MEDIUM'}
                   onChange={(e) =>
                     setEditingQuestion({ ...editingQuestion, difficulty: e.target.value })
                   }
-                  className="w-full text-xs px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"
+                  className="w-full text-xs px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none"
                 >
                   <option value="EASY">Easy</option>
                   <option value="MEDIUM">Medium</option>
@@ -421,7 +421,7 @@ export default function QuestionBankPage() {
                         opts[optIdx].optionText = e.target.value;
                         setEditingQuestion({ ...editingQuestion, options: opts });
                       }}
-                      className="flex-1 text-xs px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"
+                      className="flex-1 text-xs px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"
                     />
                   </div>
                 ))}
@@ -429,7 +429,7 @@ export default function QuestionBankPage() {
             )}
 
             <div>
-              <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                 Explanation / Solution
               </label>
               <textarea
@@ -438,7 +438,7 @@ export default function QuestionBankPage() {
                 onChange={(e) =>
                   setEditingQuestion({ ...editingQuestion, explanation: e.target.value })
                 }
-                className="w-full text-xs p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"
+                className="w-full text-xs p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 

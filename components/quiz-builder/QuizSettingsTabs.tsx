@@ -101,7 +101,7 @@ export function QuizSettingsTabs({
                   value={quiz.subject || ''}
                   onChange={(e) => onQuizChange({ ...quiz, subject: e.target.value })}
                   placeholder="e.g. Computer Science / Python"
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
@@ -114,7 +114,7 @@ export function QuizSettingsTabs({
                   value={quiz.department || ''}
                   onChange={(e) => onQuizChange({ ...quiz, department: e.target.value })}
                   placeholder="e.g. Information Technology"
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
@@ -127,7 +127,7 @@ export function QuizSettingsTabs({
                   value={quiz.targetClass || ''}
                   onChange={(e) => onQuizChange({ ...quiz, targetClass: e.target.value })}
                   placeholder="e.g. 4th Sem CSE-A"
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
@@ -140,7 +140,7 @@ export function QuizSettingsTabs({
                   value={quiz.category || ''}
                   onChange={(e) => onQuizChange({ ...quiz, category: e.target.value })}
                   placeholder="e.g. Mid-Term / Weekly Quiz"
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
             </div>
@@ -158,7 +158,7 @@ export function QuizSettingsTabs({
                   onChange={(e) =>
                     onQuizChange({ ...quiz, durationMinutes: parseInt(e.target.value) || 30 })
                   }
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-900 dark:text-white"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-900 dark:text-white"
                 />
                 <p className="text-[11px] text-slate-400 mt-1">
                   Server-side enforced countdown timer.
@@ -177,7 +177,7 @@ export function QuizSettingsTabs({
                   onChange={(e) =>
                     onQuizChange({ ...quiz, passingPercentage: parseFloat(e.target.value) || 40 })
                   }
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-900 dark:text-white"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-900 dark:text-white"
                 />
                 <p className="text-[11px] text-slate-400 mt-1">
                   Minimum percentage needed to pass the assessment.
@@ -243,7 +243,7 @@ export function QuizSettingsTabs({
                   onChange={(e) =>
                     onSettingsChange({ ...settings, identificationMethod: e.target.value })
                   }
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none"
                 >
                   <option value="REGISTER_NUMBER">Register Number / Roll Number</option>
                   <option value="EMAIL">Email Address</option>
@@ -268,7 +268,7 @@ export function QuizSettingsTabs({
                       maxAttempts: parseInt(e.target.value) || 1,
                     })
                   }
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none font-bold"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none font-bold"
                 />
               </div>
             </div>
@@ -403,7 +403,7 @@ export function QuizSettingsTabs({
                   onChange={(e) =>
                     onSettingsChange({ ...settings, violationAction: e.target.value })
                   }
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none"
                 >
                   <option value="AUTO_SUBMIT">Auto-Submit Attempt on Max Violations</option>
                   <option value="TERMINATE">Terminate Attempt (Zero Marks)</option>
@@ -426,7 +426,7 @@ export function QuizSettingsTabs({
                       maxViolations: parseInt(e.target.value) || 3,
                     })
                   }
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none font-bold"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none font-bold"
                 />
               </div>
             </div>

@@ -184,7 +184,7 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
               placeholder="Search by student name, roll no, email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full text-xs pl-10 pr-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full text-xs pl-10 pr-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -192,7 +192,7 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 outline-none"
+            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none"
           >
             <option value="ALL">All Statuses</option>
             <option value="SUBMITTED">Submitted / Completed</option>
@@ -204,7 +204,7 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
           <select
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
-            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 outline-none"
+            className="text-xs px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none"
           >
             <option value="ALL">All Classes</option>
             {data?.filters?.classes?.map((c: string) => (
