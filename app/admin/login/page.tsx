@@ -11,6 +11,7 @@ import {
   Loader2,
   AlertCircle,
 } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -55,10 +56,10 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col justify-center items-center p-4">
       {/* Brand Icon */}
       <div className="flex flex-col items-center mb-8 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-xl shadow-indigo-500/30 mb-3">
-          <Sparkles className="w-7 h-7" />
+        <div className="mb-3">
+          <Logo size="xl" imageOnly />
         </div>
-        <h1 className="text-2xl font-black text-white tracking-tight">Testora Admin</h1>
+        <h1 className="text-2xl font-black text-white tracking-tight">XamPlus Admin</h1>
         <p className="text-xs text-slate-400 mt-1">
           Online Assessment & Examination Management Portal
         </p>

@@ -16,6 +16,7 @@ import {
   Clock,
   Layers,
 } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 export default function HomePage() {
   const router = useRouter();
@@ -44,15 +45,9 @@ export default function HomePage() {
       {/* Navigation */}
       <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-base font-bold text-white tracking-tight">Testora</span>
-              <span className="text-xs text-indigo-400 font-medium block">Assessment Engine</span>
-            </div>
-          </div>
+          <Link href="/" className="hover:opacity-90 transition">
+            <Logo size="md" subtitle="Assessment Engine" />
+          </Link>
 
           <div className="flex items-center gap-3">
             <Link
@@ -156,7 +151,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
-        Testora Assessment Management Platform • Designed for Fast Online Examinations
+        XamPlus Assessment Management Platform • Designed for Fast Online Examinations
       </footer>
     </div>
   );

@@ -17,6 +17,7 @@ import {
   Check,
   Plus,
 } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 export default function MasterAdminSimplePage() {
   const router = useRouter();
@@ -251,16 +252,11 @@ export default function MasterAdminSimplePage() {
       {/* SIMPLE HEADER BAR */}
       <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 px-6 py-3.5">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold shadow">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-base font-bold text-white tracking-tight">Testora</span>
-              <span className="ml-2 text-[10px] uppercase font-bold text-purple-300 bg-purple-950 border border-purple-500/40 px-2 py-0.5 rounded">
-                Master Admin
-              </span>
-            </div>
+          <div className="flex items-center gap-3">
+            <Logo size="sm" />
+            <span className="text-[10px] uppercase font-bold text-purple-300 bg-purple-950 border border-purple-500/40 px-2 py-0.5 rounded">
+              Master Admin
+            </span>
           </div>
 
           <div className="flex items-center gap-3">

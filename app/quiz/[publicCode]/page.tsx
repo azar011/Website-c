@@ -19,6 +19,7 @@ import {
   Loader2,
   CheckCircle,
 } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 export default function StudentQuizStartPage({
   params,
@@ -131,11 +132,8 @@ export default function StudentQuizStartPage({
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-4 sm:p-6">
       {/* Brand Header */}
-      <div className="flex items-center gap-2.5 mb-6">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-          <Sparkles className="w-4 h-4" />
-        </div>
-        <span className="text-sm font-bold text-white tracking-tight">Testora Assessment</span>
+      <div className="mb-6">
+        <Logo size="sm" subtitle="Assessment" />
       </div>
 
       {/* Main Card */}

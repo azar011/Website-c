@@ -16,6 +16,7 @@ import {
   X,
   FileCheck,
 } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 export default function StudentResultPage({
   params,
@@ -84,11 +85,8 @@ export default function StudentResultPage({
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-4 sm:p-6 selection:bg-indigo-500 selection:text-white">
       {/* Brand Header */}
-      <div className="flex items-center gap-2 mb-6">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-          <Sparkles className="w-4 h-4" />
-        </div>
-        <span className="text-sm font-bold text-white tracking-tight">Testora Evaluation</span>
+      <div className="mb-6">
+        <Logo size="sm" subtitle="Evaluation" />
       </div>
 
       {/* Main Result Card */}

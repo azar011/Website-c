@@ -1,4 +1,4 @@
-# Testora — Complete Online Quiz & Assessment Management Platform
+# XamPlus — Complete Online Quiz & Assessment Management Platform
 
 A production-ready web application for creating, conducting, and analyzing online quizzes and assessments with Google Forms-like ease, advanced anti-cheating browser monitoring, server-side scoring, and dynamic Excel/CSV report exports.
 
@@ -84,7 +84,7 @@ Create a `.env` file based on `.env.example`:
 DATABASE_URL="file:./dev.db"
 AUTH_SECRET="your-super-secure-jwt-key"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
-NEXT_PUBLIC_APP_NAME="Testora Assessment Platform"
+NEXT_PUBLIC_APP_NAME="XamPlus Assessment Platform"
 ```
 
 ### 3. Initialize Database & Seed

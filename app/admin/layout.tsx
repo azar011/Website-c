@@ -4,7 +4,7 @@ import { getSessionAdmin } from '@/lib/auth';
 import { AdminLayoutClient } from './AdminLayoutClient';
 
 export const metadata = {
-  title: 'Admin Portal | Testora Platform',
+  title: 'Admin Portal | XamPlus Platform',
   description: 'Online Assessment Management Platform for Teachers and Administrators',
 };
 

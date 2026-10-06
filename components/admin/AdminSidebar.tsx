@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
+import { Logo } from '@/components/ui/Logo';
+
 interface AdminSidebarProps {
   adminEmail?: string;
   adminName?: string;
@@ -101,15 +103,9 @@ export function AdminSidebar({
     <div className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 h-full select-none">
       {/* Brand & Mobile Close */}
       <div className="p-5 sm:p-6 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="text-base font-bold text-white tracking-tight leading-tight">Testora</div>
-            <div className="text-[11px] text-indigo-400 font-medium">Assessment Engine</div>
-          </div>
-        </div>
+        <Link href="/admin" className="hover:opacity-90 transition">
+          <Logo size="md" subtitle="Assessment Engine" />
+        </Link>
 
         {onClose && (
           <button

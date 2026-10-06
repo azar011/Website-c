@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { ArrowLeft, ShieldCheck, LogOut, Menu, Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
+import { Logo } from '@/components/ui/Logo';
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
@@ -161,12 +162,7 @@ export function AdminLayoutClient({ children, admin }: AdminLayoutClientProps) {
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow">
-            <Sparkles className="w-3.5 h-3.5" />
-          </div>
-          <span className="text-sm font-bold text-white tracking-tight">Testora</span>
-        </div>
+        <Logo size="sm" />
 
         <button
           onClick={handleLogout}

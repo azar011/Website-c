@@ -14,10 +14,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Testora | Online Assessment & Examination Platform",
-    template: "%s | Testora Platform",
+    default: "XamPlus | Online Assessment & Examination Platform",
+    template: "%s | XamPlus Platform",
   },
   description: "Comprehensive online assessment, quiz creation, and anti-cheating examination platform.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
