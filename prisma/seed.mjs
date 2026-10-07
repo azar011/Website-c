@@ -89,6 +89,7 @@ async function main() {
             singleResponse: false,
             identificationMethod: 'REGISTER_NUMBER',
             maxAttempts: 2,
+            disablePreviousQuestion: false,
             requireName: true,
             requireRegisterNumber: true,
             requireEmail: true,

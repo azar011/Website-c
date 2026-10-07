@@ -240,6 +240,7 @@ export async function POST(
         detectPrint: settings?.detectPrint ?? true,
         maxViolations: settings?.maxViolations ?? 3,
         violationAction: settings?.violationAction ?? 'AUTO_SUBMIT',
+        disablePreviousQuestion: settings?.disablePreviousQuestion ?? false,
       },
       questions: safeQuestions,
     });

@@ -61,6 +61,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
                 singleResponse: original.settings.singleResponse,
                 identificationMethod: original.settings.identificationMethod,
                 maxAttempts: original.settings.maxAttempts,
+                disablePreviousQuestion: original.settings.disablePreviousQuestion ?? false,
                 requireName: original.settings.requireName,
                 requireRegisterNumber: original.settings.requireRegisterNumber,
                 requireEmail: original.settings.requireEmail,

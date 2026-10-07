@@ -66,6 +66,9 @@ model QuizSettings {
   identificationMethod    String    @default("REGISTER_NUMBER") // NAME, EMAIL, REGISTER_NUMBER, NAME_AND_REGISTER_NUMBER, EMAIL_AND_REGISTER_NUMBER
   maxAttempts             Int       @default(1)
   
+  // Navigation & Sequence Controls
+  disablePreviousQuestion Boolean   @default(false)
+  
   // Required student identity fields
   requireName             Boolean   @default(true)
   requireRegisterNumber   Boolean   @default(true)

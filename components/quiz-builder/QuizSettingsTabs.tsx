@@ -11,6 +11,8 @@ import {
   Layers,
   Sparkles,
   AlertTriangle,
+  Lock,
+  ArrowRightCircle,
 } from 'lucide-react';
 
 interface QuizSettingsTabsProps {
@@ -215,6 +217,43 @@ export function QuizSettingsTabs({
                   <span>Shuffle Answer Options (A, B, C, D)</span>
                 </label>
               </div>
+            </div>
+
+            {/* Question Navigation & Backtracking (Linear Mode) */}
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Lock className="w-4 h-4 text-amber-500" />
+                  <span>Question Navigation & Backtracking</span>
+                </div>
+                {settings.disablePreviousQuestion && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    Linear Exam Active
+                  </span>
+                )}
+              </div>
+
+              <label className="flex items-start gap-3 cursor-pointer p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-850 transition">
+                <input
+                  type="checkbox"
+                  checked={settings.disablePreviousQuestion || false}
+                  onChange={(e) =>
+                    onSettingsChange({
+                      ...settings,
+                      disablePreviousQuestion: e.target.checked,
+                    })
+                  }
+                  className="w-4 h-4 text-indigo-600 rounded mt-0.5 shrink-0"
+                />
+                <div>
+                  <span className="text-xs font-bold text-slate-900 dark:text-white block">
+                    Prevent student from returning to previous questions once attended
+                  </span>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                    Once enabled, students cannot go back to previous questions after moving forward. A clear warning will be displayed to students on the start page and throughout the examination session.
+                  </p>
+                </div>
+              </label>
             </div>
           </div>
         )}

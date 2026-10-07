@@ -18,6 +18,7 @@ import {
   Hash,
   Loader2,
   CheckCircle,
+  Lock,
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 
@@ -191,11 +192,28 @@ export default function StudentQuizStartPage({
 
         {/* Anti-cheating banner if enabled */}
         {settings.enableAntiCheat && (
-          <div className="mb-6 p-3 rounded-xl bg-indigo-950/30 border border-indigo-900/40 text-xs text-indigo-300 flex items-start gap-2.5">
+          <div className="mb-4 p-3 rounded-xl bg-indigo-950/30 border border-indigo-900/40 text-xs text-indigo-300 flex items-start gap-2.5">
             <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
             <div className="leading-relaxed text-[11px]">
               <strong>Security Protocol:</strong> Fullscreen mode, tab-switch detection, and window
               focus tracking are active. Violations are logged and may trigger auto-submission.
+            </div>
+          </div>
+        )}
+
+        {/* Linear Progression / No-Backtracking Notice */}
+        {settings.disablePreviousQuestion && (
+          <div className="mb-6 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-3 shadow-lg shadow-amber-950/20">
+            <div className="p-1 rounded-lg bg-amber-500/20 text-amber-400 shrink-0 mt-0.5">
+              <Lock className="w-4 h-4" />
+            </div>
+            <div className="space-y-1">
+              <div className="font-bold text-amber-300 text-xs flex items-center gap-1.5">
+                <span>Strict Navigation Rule: No Backtracking</span>
+              </div>
+              <p className="text-[11px] text-amber-200/90 leading-relaxed">
+                Once you proceed to the next question, you <strong>cannot go back to previous questions</strong> to view or edit your answers. Ensure your response is selected before clicking Next.
+              </p>
             </div>
           </div>
         )}

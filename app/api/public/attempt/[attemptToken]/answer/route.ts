@@ -11,7 +11,11 @@ export async function POST(
     const attempt = await prisma.attempt.findUnique({
       where: { attemptToken },
       include: {
-        quiz: true,
+        quiz: {
+          include: {
+            settings: true,
+          },
+        },
       },
     });
 
@@ -42,6 +46,32 @@ export async function POST(
 
     if (!questionId) {
       return NextResponse.json({ error: 'Question ID is required.' }, { status: 400 });
+    }
+
+    // Linear mode enforcement: student cannot alter previous questions once advanced past them
+    if (attempt.quiz?.settings?.disablePreviousQuestion && attempt.questionOrder) {
+      try {
+        const orderArr: string[] = JSON.parse(attempt.questionOrder);
+        const currentTargetIdx = orderArr.indexOf(questionId);
+        if (currentTargetIdx !== -1) {
+          const existingAnswers = await prisma.responseAnswer.findMany({
+            where: { attemptId: attempt.id },
+            select: { questionId: true },
+          });
+          const hasLaterAnswers = existingAnswers.some((ans) => {
+            const answeredIdx = orderArr.indexOf(ans.questionId);
+            return answeredIdx > currentTargetIdx;
+          });
+          if (hasLaterAnswers) {
+            return NextResponse.json(
+              { error: 'Cannot modify previous questions in linear examination mode.' },
+              { status: 403 }
+            );
+          }
+        }
+      } catch (e) {
+        console.warn('Linear mode order validation warning:', e);
+      }
     }
 
     // Convert selectedOptionIds to string if array/object

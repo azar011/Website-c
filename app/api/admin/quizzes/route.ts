@@ -106,6 +106,7 @@ export async function POST(req: NextRequest) {
             singleResponse: false,
             identificationMethod: 'REGISTER_NUMBER',
             maxAttempts: 1,
+            disablePreviousQuestion: false,
             requireName: true,
             requireRegisterNumber: true,
             requireEmail: false,

@@ -19,6 +19,7 @@ import {
   CheckSquare,
   Loader2,
   Sparkles,
+  Lock,
 } from 'lucide-react';
 
 export default function StudentLiveQuizPage({
@@ -59,6 +60,8 @@ export default function StudentLiveQuizPage({
 
   // Submit confirmation modal
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showSkipWarningModal, setShowSkipWarningModal] = useState(false);
+  const [navWarningToast, setNavWarningToast] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -409,6 +412,43 @@ export default function StudentLiveQuizPage({
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const isLinearMode = Boolean(quizData?.settings?.disablePreviousQuestion);
+
+  const hasCurrentAnswer = () => {
+    const a = answers[qId];
+    return (
+      (a?.selectedOptionIds && a.selectedOptionIds !== '[]' && a.selectedOptionIds !== '{}') ||
+      (a?.textAnswer && a.textAnswer.trim().length > 0)
+    );
+  };
+
+  const handleNextQuestion = () => {
+    if (isLinearMode && !hasCurrentAnswer()) {
+      setShowSkipWarningModal(true);
+      return;
+    }
+    if (currentIdx < questions.length - 1) {
+      setCurrentIdx((prev) => prev + 1);
+    }
+  };
+
+  const handlePaletteClick = (targetIdx: number) => {
+    if (isLinearMode) {
+      if (targetIdx < currentIdx) {
+        setNavWarningToast('Previous questions are locked and cannot be revisited in linear mode.');
+        setTimeout(() => setNavWarningToast(null), 3500);
+        return;
+      }
+      if (targetIdx > currentIdx) {
+        setNavWarningToast('Please proceed sequentially using the Next Question button.');
+        setTimeout(() => setNavWarningToast(null), 3500);
+        return;
+      }
+      return;
+    }
+    setCurrentIdx(targetIdx);
+  };
+
   const isLowTime = secondsRemaining !== null && secondsRemaining <= 120;
 
   return (
@@ -472,6 +512,16 @@ export default function StudentLiveQuizPage({
         </div>
       </header>
 
+      {/* PERSISTENT NOTICE FROM BEGINNING OF TEST IF LINEAR MODE */}
+      {isLinearMode && (
+        <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-center text-xs font-semibold text-amber-300 flex items-center justify-center gap-2 shadow-inner">
+          <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span>
+            <strong>Linear Exam Active:</strong> Backtracking is disabled. You cannot return to previous questions once you proceed.
+          </span>
+        </div>
+      )}
+
       {/* MAIN EXAM BODY */}
       <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* LEFT / CENTER: QUESTION VIEWER (2 Cols on lg) */}
@@ -479,22 +529,36 @@ export default function StudentLiveQuizPage({
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
             {/* Header: Question Badge & Mark for Review */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
-                Question {currentIdx + 1}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+                  Question {currentIdx + 1}
+                </span>
+                {isLinearMode && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    Linear Exam
+                  </span>
+                )}
+              </div>
 
-              <button
-                type="button"
-                onClick={() => toggleMarkForReview(qId)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
-                  isMarked
-                    ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
-                    : 'border-slate-800 text-slate-400 hover:text-white'
-                }`}
-              >
-                <Bookmark className="w-3.5 h-3.5" />
-                <span>{isMarked ? 'Marked for Review' : 'Mark for Review'}</span>
-              </button>
+              {isLinearMode ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] font-semibold text-amber-300" title="In linear mode, questions cannot be marked for later review because backtracking is disabled.">
+                  <Lock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Final on Proceed</span>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => toggleMarkForReview(qId)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
+                    isMarked
+                      ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
+                      : 'border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Bookmark className="w-3.5 h-3.5" />
+                  <span>{isMarked ? 'Marked for Review' : 'Mark for Review'}</span>
+                </button>
+              )}
             </div>
 
             {/* Question Text */}
@@ -684,24 +748,34 @@ export default function StudentLiveQuizPage({
                 </div>
               )}
             </div>
-          </div>
-
-          {/* PREVIOUS / NEXT / SUBMIT ACTION BAR */}
+          </div>          {/* PREVIOUS / NEXT / SUBMIT ACTION BAR */}
           <div className="flex items-center justify-between gap-3">
             <button
               type="button"
-              onClick={() => setCurrentIdx((prev) => Math.max(0, prev - 1))}
-              disabled={currentIdx === 0}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-800 disabled:opacity-30 transition"
+              onClick={() => {
+                if (isLinearMode) {
+                  setNavWarningToast('Previous questions are locked in linear examination mode.');
+                  setTimeout(() => setNavWarningToast(null), 3000);
+                  return;
+                }
+                setCurrentIdx((prev) => Math.max(0, prev - 1));
+              }}
+              disabled={currentIdx === 0 || isLinearMode}
+              title={isLinearMode ? 'Cannot return to previous questions in linear mode' : 'Previous Question'}
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-semibold border transition ${
+                isLinearMode
+                  ? 'bg-slate-950 border-slate-800/80 text-slate-600 cursor-not-allowed opacity-50'
+                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800 disabled:opacity-30'
+              }`}
             >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Previous</span>
+              {isLinearMode ? <Lock className="w-3.5 h-3.5 text-slate-600" /> : <ChevronLeft className="w-4 h-4" />}
+              <span>{isLinearMode ? 'Previous (Locked)' : 'Previous'}</span>
             </button>
 
             {currentIdx < questions.length - 1 ? (
               <button
                 type="button"
-                onClick={() => setCurrentIdx((prev) => prev + 1)}
+                onClick={handleNextQuestion}
                 className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition"
               >
                 <span>Next Question</span>
@@ -740,14 +814,29 @@ export default function StudentLiveQuizPage({
                 (a?.textAnswer && a.textAnswer.trim().length > 0);
               const isRev = markedForReview.has(q.id);
               const isCur = currentIdx === idx;
+              const isPast = isLinearMode && idx < currentIdx;
+              const isFuture = isLinearMode && idx > currentIdx;
 
               return (
                 <button
                   key={q.id || idx}
-                  onClick={() => setCurrentIdx(idx)}
-                  className={`h-9 rounded-xl font-bold text-xs transition relative flex items-center justify-center ${
+                  onClick={() => handlePaletteClick(idx)}
+                  title={
+                    isPast
+                      ? `Question ${idx + 1} (Locked - cannot revisit)`
+                      : isFuture
+                      ? `Question ${idx + 1} (Please proceed via Next Question)`
+                      : `Question ${idx + 1}`
+                  }
+                  className={`h-9 rounded-xl font-bold text-xs transition relative flex items-center justify-center gap-0.5 ${
                     isCur
                       ? 'border-2 border-indigo-400 bg-indigo-600 text-white shadow'
+                      : isPast
+                      ? isAns
+                        ? 'bg-slate-900 text-emerald-400 border border-emerald-900/60 cursor-not-allowed opacity-80'
+                        : 'bg-slate-950 text-slate-600 border border-slate-800/60 cursor-not-allowed opacity-60'
+                      : isFuture
+                      ? 'bg-slate-950 text-slate-500 border border-slate-800 hover:text-slate-400'
                       : isRev
                       ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                       : isAns
@@ -755,31 +844,53 @@ export default function StudentLiveQuizPage({
                       : 'bg-slate-950 text-slate-500 border border-slate-800 hover:text-white'
                   }`}
                 >
-                  {idx + 1}
+                  {isPast && <Lock className="w-2.5 h-2.5 opacity-60 mr-0.5" />}
+                  <span>{idx + 1}</span>
                 </button>
               );
             })}
           </div>
 
           {/* Legend */}
-          <div className="pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-[11px]">
-            <div className="flex items-center gap-2 text-slate-400">
-              <span className="w-3 h-3 rounded-full bg-emerald-500/40 border border-emerald-500"></span>
-              <span>Answered ({answeredCount})</span>
+          {isLinearMode ? (
+            <div className="pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-[11px]">
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[8px] text-slate-400">🔒</span>
+                <span>Past Questions ({currentIdx})</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full border-2 border-indigo-400 bg-indigo-600"></span>
+                <span>Current Question</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full bg-emerald-500/40 border border-emerald-500"></span>
+                <span>Answered ({answeredCount})</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full bg-slate-950 border border-slate-800"></span>
+                <span>Remaining ({questions.length - currentIdx - 1})</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-slate-400">
-              <span className="w-3 h-3 rounded-full bg-amber-500/40 border border-amber-500"></span>
-              <span>Review ({markedCount})</span>
+          ) : (
+            <div className="pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-[11px]">
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full bg-emerald-500/40 border border-emerald-500"></span>
+                <span>Answered ({answeredCount})</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full bg-amber-500/40 border border-amber-500"></span>
+                <span>Review ({markedCount})</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full bg-slate-800 border border-slate-700"></span>
+                <span>Unanswered ({unansweredCount})</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="w-3 h-3 rounded-full border-2 border-indigo-400 bg-indigo-600"></span>
+                <span>Current</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-slate-400">
-              <span className="w-3 h-3 rounded-full bg-slate-800 border border-slate-700"></span>
-              <span>Unanswered ({unansweredCount})</span>
-            </div>
-            <div className="flex items-center gap-2 text-slate-400">
-              <span className="w-3 h-3 rounded-full border-2 border-indigo-400 bg-indigo-600"></span>
-              <span>Current</span>
-            </div>
-          </div>
+          )}
 
           {/* Finish & Submit Button */}
           <button
@@ -842,6 +953,53 @@ export default function StudentLiveQuizPage({
           </div>
         </div>
       </Modal>
+
+      {/* UNANSWERED QUESTION SKIP WARNING (LINEAR MODE) */}
+      <Modal
+        isOpen={showSkipWarningModal}
+        onClose={() => setShowSkipWarningModal(false)}
+        title="Unanswered Question Notice"
+        maxWidth="md"
+      >
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto border border-amber-500/20">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-white">Proceed without answering Question {currentIdx + 1}?</h4>
+            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              In this assessment, <strong>backtracking is disabled</strong>. You will not be able to return to Question {currentIdx + 1} once you proceed.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setShowSkipWarningModal(false)}
+              className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 text-xs font-semibold hover:bg-slate-800"
+            >
+              Stay & Answer
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowSkipWarningModal(false);
+                setCurrentIdx((prev) => Math.min(questions.length - 1, prev + 1));
+              }}
+              className="flex-1 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow transition"
+            >
+              Skip & Move Next
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* FLOATING NAVIGATION TOAST */}
+      {navWarningToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-amber-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 border border-amber-400/40">
+          <Lock className="w-4 h-4 shrink-0" />
+          <span>{navWarningToast}</span>
+        </div>
+      )}
 
       {/* SECURITY VIOLATION WARNING MODAL */}
       {violationModal && (

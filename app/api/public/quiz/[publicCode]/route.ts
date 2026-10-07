@@ -102,6 +102,7 @@ export async function GET(
           requireFullscreen: quiz.settings?.requireFullscreen ?? true,
           detectTabSwitch: quiz.settings?.detectTabSwitch ?? true,
           maxViolations: quiz.settings?.maxViolations ?? 3,
+          disablePreviousQuestion: quiz.settings?.disablePreviousQuestion ?? false,
         },
       },
     });

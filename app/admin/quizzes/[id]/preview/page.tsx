@@ -11,6 +11,7 @@ import {
   HelpCircle,
   AlertTriangle,
   Loader2,
+  Lock,
 } from 'lucide-react';
 
 export default function QuizPreviewPage({ params }: { params: Promise<{ id: string }> }) {
@@ -155,30 +156,52 @@ export default function QuizPreviewPage({ params }: { params: Promise<{ id: stri
             <div className="mt-8 flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => setCurrentIdx((prev) => Math.max(0, prev - 1))}
-                disabled={currentIdx === 0}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-950 text-slate-300 text-xs font-semibold hover:bg-slate-900 disabled:opacity-30 transition"
+                onClick={() => {
+                  if (quiz.settings?.disablePreviousQuestion) return;
+                  setCurrentIdx((prev) => Math.max(0, prev - 1));
+                }}
+                disabled={currentIdx === 0 || quiz.settings?.disablePreviousQuestion}
+                title={quiz.settings?.disablePreviousQuestion ? 'Previous button is disabled in Linear Exam mode' : 'Previous'}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-semibold transition ${
+                  quiz.settings?.disablePreviousQuestion
+                    ? 'border-slate-800 bg-slate-950 text-slate-600 cursor-not-allowed opacity-50'
+                    : 'border-slate-800 bg-slate-950 text-slate-300 hover:bg-slate-900 disabled:opacity-30'
+                }`}
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Previous</span>
+                {quiz.settings?.disablePreviousQuestion ? (
+                  <Lock className="w-3.5 h-3.5 text-slate-600" />
+                ) : (
+                  <ArrowLeft className="w-4 h-4" />
+                )}
+                <span>{quiz.settings?.disablePreviousQuestion ? 'Previous (Locked)' : 'Previous'}</span>
               </button>
 
               <div className="flex items-center gap-1.5 overflow-x-auto max-w-sm px-2">
-                {questions.map((_: any, idx: number) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentIdx(idx)}
-                    className={`w-8 h-8 rounded-lg text-xs font-bold transition ${
-                      currentIdx === idx
-                        ? 'bg-indigo-600 text-white'
-                        : answers[questions[idx].id]
-                        ? 'bg-slate-800 text-emerald-400 border border-emerald-800'
-                        : 'bg-slate-950 text-slate-500 hover:text-slate-300 border border-slate-800'
-                    }`}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
+                {questions.map((_: any, idx: number) => {
+                  const isPast = quiz.settings?.disablePreviousQuestion && idx < currentIdx;
+                  const isCur = currentIdx === idx;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        if (quiz.settings?.disablePreviousQuestion && idx !== currentIdx) return;
+                        setCurrentIdx(idx);
+                      }}
+                      title={isPast ? `Question ${idx + 1} (Locked in linear mode)` : `Question ${idx + 1}`}
+                      className={`w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center ${
+                        isCur
+                          ? 'bg-indigo-600 text-white'
+                          : isPast
+                          ? 'bg-slate-950 text-slate-600 border border-slate-800 cursor-not-allowed opacity-60'
+                          : answers[questions[idx].id]
+                          ? 'bg-slate-800 text-emerald-400 border border-emerald-800'
+                          : 'bg-slate-950 text-slate-500 hover:text-slate-300 border border-slate-800'
+                      }`}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
               </div>
 
               {currentIdx === questions.length - 1 ? (
