@@ -9,16 +9,17 @@ datasource db {
 }
 
 model Admin {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  passwordHash String
-  name         String
-  role         String     @default("ADMIN")
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  quizzes      Quiz[]
-  questions    Question[]
-  auditLogs    AuditLog[]
+  id             String         @id @default(cuid())
+  email          String         @unique
+  passwordHash   String
+  name           String
+  role           String         @default("ADMIN")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  quizzes        Quiz[]
+  questions      Question[]
+  auditLogs      AuditLog[]
+  studentBatches StudentBatch[]
 }
 
 model Quiz {
@@ -49,6 +50,7 @@ model Quiz {
   questions           Question[]
   attempts            Attempt[]
   violations          ViolationLog[]
+  batches             QuizBatch[]
 
   @@index([publicCode])
   @@index([status])
@@ -65,6 +67,10 @@ model QuizSettings {
   singleResponse          Boolean   @default(false)
   identificationMethod    String    @default("REGISTER_NUMBER") // NAME, EMAIL, REGISTER_NUMBER, NAME_AND_REGISTER_NUMBER, EMAIL_AND_REGISTER_NUMBER
   maxAttempts             Int       @default(1)
+  
+  // Batch Assignment Controls (Optional extra feature)
+  restrictToBatch         Boolean   @default(false)
+  allowResumeByAdmin      Boolean   @default(true)
   
   // Navigation & Sequence Controls
   disablePreviousQuestion Boolean   @default(false)
@@ -193,6 +199,10 @@ model Attempt {
   totalNegativeMarks  Float            @default(0.0)
   violationCount      Int              @default(0)
 
+  // Resumed tracking
+  resumedAt           DateTime?
+  resumedCount        Int              @default(0)
+
   answers             ResponseAnswer[]
   violations          ViolationLog[]
 
@@ -259,4 +269,56 @@ model AuditLog {
 
   @@index([adminId])
   @@index([action])
+}
+
+// Student Batch Management (User Admin)
+model StudentBatch {
+  id          String         @id @default(cuid())
+  name        String
+  className   String?
+  department  String?
+  description String?
+  
+  adminId     String
+  admin       Admin          @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  
+  students    BatchStudent[]
+  quizzes     QuizBatch[]
+  
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([adminId])
+}
+
+model BatchStudent {
+  id             String       @id @default(cuid())
+  batchId        String
+  batch          StudentBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  
+  name           String
+  registerNumber String
+  email          String?
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([batchId, registerNumber])
+  @@index([batchId])
+  @@index([registerNumber])
+}
+
+model QuizBatch {
+  id        String       @id @default(cuid())
+  quizId    String
+  quiz      Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  
+  batchId   String
+  batch     StudentBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime     @default(now())
+
+  @@unique([quizId, batchId])
+  @@index([quizId])
+  @@index([batchId])
 }

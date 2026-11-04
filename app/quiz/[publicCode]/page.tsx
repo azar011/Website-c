@@ -14,6 +14,7 @@ import {
   User,
   Mail,
   GraduationCap,
+  Globe,
   Building,
   Hash,
   Loader2,
@@ -60,13 +61,6 @@ export default function StudentQuizStartPage({
     e.preventDefault();
     setErrorMsg(null);
     setStarting(true);
-
-    // Enter fullscreen immediately on student click user-gesture
-    if (quizData?.settings?.requireFullscreen && typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.warn('Browser prevented instant fullscreen request:', err);
-      });
-    }
 
     try {
       const res = await fetch(`/api/public/quiz/${publicCode}/start`, {
@@ -187,6 +181,28 @@ export default function StudentQuizStartPage({
               Instructions:
             </span>
             <p className="leading-relaxed">{quizData.instructions}</p>
+          </div>
+        )}
+
+        {/* Access mode banner: Batches Only vs Public Quiz */}
+        {settings.restrictToBatch ? (
+          <div className="mb-4 p-3 rounded-xl bg-purple-950/40 border border-purple-800/60 text-xs text-purple-200 flex items-start gap-2.5">
+            <GraduationCap className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+            <div className="leading-relaxed text-[11px]">
+              <strong>Cohort-Restricted Assessment:</strong> This test is restricted to assigned student batches. Only enrolled students with their registered Roll / Register Number can participate.
+              {quizData.assignedBatches?.length > 0 && (
+                <div className="mt-1 font-semibold text-purple-300">
+                  Target Cohorts: {quizData.assignedBatches.join(', ')}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="mb-4 p-3 rounded-xl bg-blue-950/30 border border-blue-900/40 text-xs text-blue-300 flex items-start gap-2.5">
+            <Globe className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+            <div className="leading-relaxed text-[11px]">
+              <strong>Public Assessment:</strong> Open access. Anyone with this quiz link or code can participate.
+            </div>
           </div>
         )}
 

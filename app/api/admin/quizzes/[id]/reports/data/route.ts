@@ -18,6 +18,23 @@ export async function GET(
       where: { id: quizId },
       include: {
         settings: true,
+        batches: {
+          include: {
+            batch: {
+              include: {
+                students: {
+                  select: {
+                    id: true,
+                    name: true,
+                    registerNumber: true,
+                    email: true,
+                  },
+                  orderBy: { registerNumber: 'asc' },
+                },
+              },
+            },
+          },
+        },
         questions: {
           include: {
             options: true,
@@ -40,6 +57,95 @@ export async function GET(
 
     const totalMarks = quiz.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
 
+    // Also fetch all batches owned by this quiz's admin to detect any batches whose students attended
+    // (even if the quiz was switched to Public mode)
+    const allAdminBatches = await prisma.studentBatch.findMany({
+      where: { adminId: quiz.adminId },
+      include: {
+        students: {
+          select: {
+            id: true,
+            name: true,
+            registerNumber: true,
+            email: true,
+          },
+          orderBy: { registerNumber: 'asc' },
+        },
+      },
+    });
+
+    // Collect all batches relevant to this quiz:
+    // 1) Explicitly assigned via QuizBatch
+    const relevantBatchesMap = new Map<string, any>();
+    (quiz.batches || []).forEach((qb) => {
+      relevantBatchesMap.set(qb.batch.id, qb.batch);
+    });
+
+    // 2) Any admin batch where at least one student took this quiz
+    const attemptRegs = new Set(
+      quiz.attempts.map((a) => (a.registerNumber || '').trim().toLowerCase()).filter(Boolean)
+    );
+
+    for (const b of allAdminBatches) {
+      if (!relevantBatchesMap.has(b.id)) {
+        const hasStudentAttended = b.students.some((st) =>
+          attemptRegs.has((st.registerNumber || '').trim().toLowerCase())
+        );
+        if (hasStudentAttended) {
+          relevantBatchesMap.set(b.id, b);
+          // Self-heal QuizBatch relation so it stays linked
+          try {
+            await prisma.quizBatch.upsert({
+              where: {
+                quizId_batchId: {
+                  quizId: quiz.id,
+                  batchId: b.id,
+                },
+              },
+              create: {
+                quizId: quiz.id,
+                batchId: b.id,
+              },
+              update: {},
+            });
+          } catch {}
+        }
+      }
+    }
+
+    // Build lookup map for batch students: registerNumber (lowercase) -> batch details
+    const registerToBatchMap = new Map<
+      string,
+      { id: string; name: string; className: string | null; department: string | null }
+    >();
+
+    const assignedBatches = Array.from(relevantBatchesMap.values()).map((b) => {
+      (b.students || []).forEach((st: any) => {
+        if (st.registerNumber) {
+          registerToBatchMap.set(st.registerNumber.trim().toLowerCase(), {
+            id: b.id,
+            name: b.name,
+            className: b.className,
+            department: b.department,
+          });
+        }
+      });
+
+      return {
+        id: b.id,
+        name: b.name,
+        className: b.className,
+        department: b.department,
+        totalStudents: b.students?.length || 0,
+        students: (b.students || []).map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          registerNumber: s.registerNumber,
+          email: s.email,
+        })),
+      };
+    });
+
     return NextResponse.json({
       success: true,
       quiz: {
@@ -51,8 +157,10 @@ export async function GET(
         targetClass: quiz.targetClass,
         durationMinutes: quiz.durationMinutes,
         passingPercentage: quiz.passingPercentage,
+        restrictToBatch: quiz.settings?.restrictToBatch ?? false,
         totalQuestions: quiz.questions.length,
         totalMarks,
+        assignedBatches,
         questions: quiz.questions.map((q, idx) => ({
           id: q.id,
           orderIndex: idx + 1,
@@ -74,14 +182,23 @@ export async function GET(
             questionScores[ans.questionId] = ans.marksAwarded;
           });
 
+          // Match attempt to batch
+          const regKey = (att.registerNumber || '').trim().toLowerCase();
+          const matchedBatch = regKey ? registerToBatchMap.get(regKey) : null;
+          const batchId = matchedBatch ? matchedBatch.id : 'PUBLIC';
+          const batchName = matchedBatch ? matchedBatch.name : 'Public Link';
+
           return {
             id: att.id,
             sno: idx + 1,
             studentName: att.studentName || 'N/A',
             registerNumber: att.registerNumber || 'N/A',
             email: att.email || 'N/A',
-            studentClass: att.studentClass || 'N/A',
-            department: att.department || 'N/A',
+            studentClass: att.studentClass || matchedBatch?.className || 'N/A',
+            department: att.department || matchedBatch?.department || 'N/A',
+            batchId,
+            batchName,
+            isPublic: !matchedBatch,
             status: att.status,
             totalScore: att.totalScore,
             maxMarks: totalMarks,

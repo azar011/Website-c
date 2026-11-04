@@ -10,6 +10,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   const { id } = await params;
+  const searchParams = req.nextUrl.searchParams;
+  const batchId = searchParams.get('batchId') || undefined;
+  const segment = (searchParams.get('segment') as any) || undefined;
 
   try {
     const quiz = await prisma.quiz.findUnique({
@@ -21,16 +24,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 
-    const excelBuffer = await generateQuizExcelReport(id);
-
-    const safeTitle = quiz.title.replace(/[^a-zA-Z0-9_-]/g, '_');
-    const filename = `${safeTitle}_Report_${quiz.publicCode}.xlsx`;
+    const { buffer: excelBuffer, filename } = await generateQuizExcelReport(id, {
+      batchId,
+      segment,
+    });
 
     await prisma.auditLog.create({
       data: {
         adminId: admin.adminId,
         action: 'REPORT_DOWNLOADED',
-        details: JSON.stringify({ quizId: id, type: 'EXCEL', filename }),
+        details: JSON.stringify({ quizId: id, type: 'EXCEL', filename, batchId, segment }),
       },
     });
 

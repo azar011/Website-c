@@ -22,6 +22,8 @@ import {
   ShieldAlert,
   ArrowLeft,
   Loader2,
+  RotateCcw,
+  PlayCircle,
 } from 'lucide-react';
 
 export default function QuizResponsesPage({ params }: { params: Promise<{ id: string }> }) {
@@ -44,6 +46,12 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
   const [deleteAttemptTarget, setDeleteAttemptTarget] = useState<any | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [currentUserRole, setCurrentRole] = useState<string>('');
+
+  // Resume Attempt target (Extra Option)
+  const [resumeTarget, setResumeTarget] = useState<any | null>(null);
+  const [resumeExtraMinutes, setResumeExtraMinutes] = useState(15);
+  const [resumeResetViolations, setResumeResetViolations] = useState(false);
+  const [resuming, setResuming] = useState(false);
 
   const { success, error } = useToast();
 
@@ -123,6 +131,37 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
       error('Failed to delete attempt');
     } finally {
       setDeleteLoading(false);
+    }
+  };
+
+  const handleConfirmResume = async () => {
+    if (!resumeTarget) return;
+    setResuming(true);
+    try {
+      const res = await fetch(`/api/admin/attempts/${resumeTarget.id}/resume`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          extraMinutes: resumeExtraMinutes,
+          resetViolations: resumeResetViolations,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        success(data.message || 'Test successfully resumed for student!');
+        setResumeTarget(null);
+        fetchResponses();
+        if (selectedAttemptId === resumeTarget.id) {
+          viewAttemptDetail(resumeTarget.id);
+        }
+      } else {
+        error(data.error || 'Failed to resume test');
+      }
+    } catch {
+      error('Network error resuming test');
+    } finally {
+      setResuming(false);
     }
   };
 
@@ -294,11 +333,23 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
 
                       <td className="px-5 py-4 font-extrabold text-slate-900 dark:text-white">
                         {att.status === 'SUBMITTED' ? (
-                          <span>
-                            {att.totalScore} pts ({att.percentage}%)
-                          </span>
+                          <div>
+                            <div>{att.totalScore} pts ({att.percentage}%)</div>
+                            {att.resumedCount > 0 && (
+                              <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold">
+                                Resumed ({att.resumedCount}x)
+                              </span>
+                            )}
+                          </div>
                         ) : (
-                          <span className="text-amber-500 font-medium">{att.status}</span>
+                          <div>
+                            <span className="text-amber-500 font-medium">{att.status}</span>
+                            {att.resumedCount > 0 && (
+                              <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold">
+                                Resumed ({att.resumedCount}x)
+                              </div>
+                            )}
+                          </div>
                         )}
                       </td>
 
@@ -344,6 +395,22 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
 
                       <td className="px-5 py-4 text-right">
                         <div className="inline-flex items-center gap-1.5">
+                          {att.status !== 'IN_PROGRESS' && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setResumeTarget(att);
+                                setResumeExtraMinutes(15);
+                                setResumeResetViolations(att.violationCount > 0);
+                              }}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-semibold text-[11px] hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition"
+                              title="Reopen / Resume test for this student"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              <span>Resume</span>
+                            </button>
+                          )}
+
                           <button
                             type="button"
                             onClick={() => viewAttemptDetail(att.id)}
@@ -388,6 +455,34 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
           </div>
         ) : (
           <div className="space-y-6">
+            {/* Resume Option Banner inside Modal */}
+            {attemptDetail.status !== 'IN_PROGRESS' && (
+              <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    <span>Candidate Submitted this Assessment</span>
+                  </div>
+                  <div className="text-[11px] text-emerald-700 dark:text-emerald-300 mt-0.5">
+                    If this test was submitted accidentally or early, you can reopen the session so the student can resume answering questions.
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResumeTarget(attemptDetail);
+                    setResumeExtraMinutes(15);
+                    setResumeResetViolations(attemptDetail.violationCount > 0);
+                  }}
+                  className="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-sm transition shrink-0"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Resume Test for Student</span>
+                </button>
+              </div>
+            )}
+
             {/* Student & Score Header */}
             <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
@@ -549,6 +644,106 @@ export default function QuizResponsesPage({ params }: { params: Promise<{ id: st
           confirmText="Delete Attempt"
         />
       )}
+
+      {/* Resume Test for Student Modal (Extra Option) */}
+      <Modal
+        isOpen={!!resumeTarget}
+        onClose={() => setResumeTarget(null)}
+        title="Resume Assessment for Student"
+      >
+        <div className="space-y-4">
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Student:</span>
+              <strong className="text-slate-900 dark:text-white">
+                {resumeTarget?.studentName || 'Student'}
+              </strong>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Register Number:</span>
+              <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                {resumeTarget?.registerNumber || 'N/A'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Current Status:</span>
+              <span className="px-1.5 py-0.5 rounded font-bold text-[10px] bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">
+                {resumeTarget?.status}
+              </span>
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            Resuming this test resets the attempt status to <strong className="text-emerald-600">IN PROGRESS</strong> and preserves all previously selected answers. The candidate can immediately re-enter the quiz using the code or link and continue where they left off.
+          </p>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+              Additional Time to Grant (Minutes)
+            </label>
+            <div className="flex items-center gap-2 mb-2">
+              {[5, 10, 15, 30].map((mins) => (
+                <button
+                  key={mins}
+                  type="button"
+                  onClick={() => setResumeExtraMinutes(mins)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    resumeExtraMinutes === mins
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                  }`}
+                >
+                  +{mins}m
+                </button>
+              ))}
+            </div>
+            <input
+              type="number"
+              min={1}
+              max={180}
+              value={resumeExtraMinutes}
+              onChange={(e) => setResumeExtraMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+              className="w-full px-3 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none"
+            />
+          </div>
+
+          <label className="flex items-start gap-2.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={resumeResetViolations}
+              onChange={(e) => setResumeResetViolations(e.target.checked)}
+              className="w-4 h-4 text-indigo-600 rounded mt-0.5"
+            />
+            <div>
+              <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                Reset Security Violation Count to 0
+              </div>
+              <div className="text-[11px] text-slate-500">
+                Check this if the test was auto-submitted due to tab switches or fullscreen exit and you wish to give the student a clean slate.
+              </div>
+            </div>
+          </label>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setResumeTarget(null)}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmResume}
+              disabled={resuming}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md shadow-emerald-600/20 transition disabled:opacity-50"
+            >
+              {resuming ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
+              <span>Confirm & Resume Test</span>
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

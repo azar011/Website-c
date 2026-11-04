@@ -33,6 +33,18 @@ export async function GET(req: NextRequest) {
       where: whereClause,
       include: {
         settings: true,
+        batches: {
+          include: {
+            batch: {
+              select: {
+                id: true,
+                name: true,
+                className: true,
+                department: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             questions: true,
@@ -128,6 +140,8 @@ export async function POST(req: NextRequest) {
             showWrongAnswers: true,
             showExplanation: false,
             showAnswerReview: false,
+            restrictToBatch: false,
+            allowResumeByAdmin: true,
           },
         },
       },

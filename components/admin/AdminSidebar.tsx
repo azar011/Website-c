@@ -16,6 +16,7 @@ import {
   ExternalLink,
   Users,
   ShieldCheck,
+  GraduationCap,
   X,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
@@ -82,6 +83,7 @@ export function AdminSidebar({
   const navItems = [
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
     { label: 'Quizzes', href: '/admin/quizzes', icon: FileQuestion },
+    { label: 'Student Batches', href: '/admin/batches', icon: GraduationCap },
     { label: 'Question Bank', href: '/admin/questions', icon: Database },
     { label: 'Reports Center', href: '/admin/reports', icon: FileSpreadsheet },
     ...(isSuperAdmin

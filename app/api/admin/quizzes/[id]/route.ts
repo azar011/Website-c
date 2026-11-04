@@ -15,6 +15,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       where: { id },
       include: {
         settings: true,
+        batches: {
+          include: {
+            batch: {
+              select: {
+                id: true,
+                name: true,
+                className: true,
+                department: true,
+                _count: {
+                  select: { students: true },
+                },
+              },
+            },
+          },
+        },
         questions: {
           include: {
             options: {
@@ -68,6 +83,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       randomizeOptions,
       questionPoolSize,
       settings,
+      batchIds,
     } = body;
 
     const existing = await prisma.quiz.findUnique({ where: { id } });
@@ -111,6 +127,20 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       });
     }
 
+    // Update assigned Batches if provided
+    if (batchIds !== undefined && Array.isArray(batchIds)) {
+      await prisma.quizBatch.deleteMany({ where: { quizId: id } });
+      if (batchIds.length > 0) {
+        await prisma.quizBatch.createMany({
+          data: batchIds.map((batchId: string) => ({
+            quizId: id,
+            batchId,
+          })),
+          skipDuplicates: true,
+        });
+      }
+    }
+
     // Audit log
     await prisma.auditLog.create({
       data: {
@@ -124,6 +154,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       where: { id },
       include: {
         settings: true,
+        batches: {
+          include: {
+            batch: {
+              select: {
+                id: true,
+                name: true,
+                className: true,
+                department: true,
+                _count: {
+                  select: { students: true },
+                },
+              },
+            },
+          },
+        },
         questions: {
           include: { options: true },
           orderBy: { orderIndex: 'asc' },

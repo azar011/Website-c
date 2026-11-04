@@ -48,7 +48,10 @@ export default function StudentLiveQuizPage({
 
   // Anti-cheating & Violations
   const [violationCount, setViolationCount] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [hasStartedExam, setHasStartedExam] = useState(false);
+  const hasStartedExamRef = useRef(false);
+  const isExamReadyRef = useRef(false);
   const [violationModal, setViolationModal] = useState<{
     show: boolean;
     title: string;
@@ -68,45 +71,142 @@ export default function StudentLiveQuizPage({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isSubmittingRef = useRef(false);
 
-  // 1. Initial Load & Session Retrieval
+  // 1. Initial Load & Session Retrieval with Live Status Support
   useEffect(() => {
-    const cachedData = sessionStorage.getItem(`attempt_${attemptToken}`);
-    if (cachedData) {
-      try {
-        const parsed = JSON.parse(cachedData);
-        setQuizData(parsed);
-        setQuestions(parsed.questions || []);
-        if (parsed.expiresAt) {
-          const expDate = new Date(parsed.expiresAt);
-          setServerExpiresAt(expDate);
-          const diff = Math.max(0, Math.floor((expDate.getTime() - Date.now()) / 1000));
-          setSecondsRemaining(diff);
+    const loadSession = async () => {
+      // First check session storage for instant render
+      const cachedData = sessionStorage.getItem(`attempt_${attemptToken}`);
+      if (cachedData) {
+        try {
+          const parsed = JSON.parse(cachedData);
+          setQuizData(parsed);
+          setQuestions(parsed.questions || []);
+          if (parsed.savedAnswers) {
+            setAnswers(parsed.savedAnswers);
+          }
+          if (parsed.expiresAt) {
+            const expDate = new Date(parsed.expiresAt);
+            setServerExpiresAt(expDate);
+            const diff = Math.max(0, Math.floor((expDate.getTime() - Date.now()) / 1000));
+            setSecondsRemaining(diff);
+          }
+          if (!parsed.settings?.requireFullscreen) {
+            setHasStartedExam(true);
+            hasStartedExamRef.current = true;
+            isExamReadyRef.current = true;
+          }
+          setLoading(false);
+        } catch {
+          // Fallback
         }
-        setLoading(false);
-      } catch {
-        // Fallback
       }
-    } else {
-      // If refreshed without session storage, restart attempt safely
-      router.push(`/quiz/${publicCode}`);
-    }
+
+      // Also verify latest status from server (e.g. In case admin just resumed this attempt or extended timer)
+      try {
+        const res = await fetch(`/api/public/attempt/${attemptToken}/status`);
+        const statusData = await res.json();
+        if (res.ok && statusData.status) {
+          if (statusData.status === 'SUBMITTED' || statusData.status === 'TERMINATED') {
+            router.push(`/quiz/${publicCode}/result/${attemptToken}`);
+            return;
+          }
+
+          if (statusData.status === 'IN_PROGRESS') {
+            setQuizData(statusData);
+            setQuestions(statusData.questions || []);
+            if (statusData.savedAnswers && Object.keys(statusData.savedAnswers).length > 0) {
+              setAnswers((prev) => ({ ...statusData.savedAnswers, ...prev }));
+            }
+            if (statusData.expiresAt) {
+              const expDate = new Date(statusData.expiresAt);
+              setServerExpiresAt(expDate);
+              const diff = Math.max(0, Math.floor((expDate.getTime() - Date.now()) / 1000));
+              setSecondsRemaining(diff);
+            }
+            if (!statusData.settings?.requireFullscreen) {
+              setHasStartedExam(true);
+              hasStartedExamRef.current = true;
+              isExamReadyRef.current = true;
+            }
+            sessionStorage.setItem(`attempt_${attemptToken}`, JSON.stringify(statusData));
+            setLoading(false);
+          }
+        } else if (!cachedData) {
+          router.push(`/quiz/${publicCode}`);
+        }
+      } catch {
+        if (!cachedData) {
+          router.push(`/quiz/${publicCode}`);
+        }
+      }
+    };
+
+    loadSession();
   }, [attemptToken, publicCode, router]);
 
-  // Helper to exit fullscreen safely
+  // Helper to exit fullscreen safely across browsers
   const exitFullscreenSafely = useCallback(() => {
-    if (typeof document !== 'undefined' && document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
+    try {
+      if (typeof document !== 'undefined') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        } else if ((document as any).webkitFullscreenElement) {
+          (document as any).webkitExitFullscreen?.();
+        } else if ((document as any).mozFullScreenElement) {
+          (document as any).mozCancelFullScreen?.();
+        } else if ((document as any).msFullscreenElement) {
+          (document as any).msExitFullscreen?.();
+        }
+      }
+    } catch {
+      // Ignore
     }
   }, []);
+
+  // Helper to request fullscreen safely across browsers
+  const requestFullscreenSafely = useCallback(async () => {
+    try {
+      if (typeof document !== 'undefined') {
+        const el = document.documentElement;
+        if (el.requestFullscreen) {
+          await el.requestFullscreen();
+        } else if ((el as any).webkitRequestFullscreen) {
+          await (el as any).webkitRequestFullscreen();
+        } else if ((el as any).mozRequestFullScreen) {
+          await (el as any).mozRequestFullScreen();
+        } else if ((el as any).msRequestFullscreen) {
+          await (el as any).msRequestFullscreen();
+        }
+      }
+    } catch (err) {
+      console.warn('Fullscreen request blocked or failed:', err);
+    }
+  }, []);
+
+  // Student clicks "Enter Fullscreen & Begin Exam" from the pre-test gate
+  const handleEnterFullscreenAndStart = async () => {
+    await requestFullscreenSafely();
+    setIsFullscreen(true);
+    setHasStartedExam(true);
+    hasStartedExamRef.current = true;
+
+    // Grace period of 2.5s for browser notification popups (e.g. "site is full screen") to settle
+    setTimeout(() => {
+      if (!isSubmittingRef.current) {
+        isExamReadyRef.current = true;
+      }
+    }, 2500);
+  };
 
   // 2. Submit Handler
   const handleSubmitAttempt = useCallback(
     async (isAutoSubmit = false) => {
       if (isSubmittingRef.current) return;
       isSubmittingRef.current = true;
+      isExamReadyRef.current = false;
       setSubmitting(true);
 
-      // Exit fullscreen immediately as the quiz is completed
+      // Immediately exit fullscreen on submit
       exitFullscreenSafely();
 
       try {
@@ -126,15 +226,16 @@ export default function StudentLiveQuizPage({
         exitFullscreenSafely();
         router.push(`/quiz/${publicCode}/result/${attemptToken}`);
       } finally {
+        exitFullscreenSafely();
         setSubmitting(false);
       }
     },
     [attemptToken, publicCode, router, exitFullscreenSafely]
   );
 
-  // 3. Server-backed Timer Countdown
+  // 3. Server-backed Timer Countdown (Only counts down once student begins exam)
   useEffect(() => {
-    if (secondsRemaining === null || serverExpiresAt === null) return;
+    if (!hasStartedExam || secondsRemaining === null || serverExpiresAt === null) return;
 
     timerRef.current = setInterval(() => {
       const now = Date.now();
@@ -150,7 +251,7 @@ export default function StudentLiveQuizPage({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [serverExpiresAt, secondsRemaining, handleSubmitAttempt]);
+  }, [hasStartedExam, serverExpiresAt, secondsRemaining, handleSubmitAttempt]);
 
   // 4. Auto-save Answer helper
   const saveAnswerToServer = async (qId: string, answerPayload: any) => {
@@ -184,7 +285,8 @@ export default function StudentLiveQuizPage({
   // 5. Anti-Cheating Violation Logger & Handler
   const recordViolation = useCallback(
     async (violationType: string, metadata: any = {}) => {
-      if (isSubmittingRef.current || !quizData?.settings?.enableAntiCheat) return;
+      // STRICT GUARD: Never record violations if test hasn't started, is submitting, or during grace period
+      if (!hasStartedExamRef.current || !isExamReadyRef.current || isSubmittingRef.current || !quizData?.settings?.enableAntiCheat) return;
 
       try {
         const res = await fetch(`/api/public/attempt/${attemptToken}/violation`, {
@@ -198,6 +300,9 @@ export default function StudentLiveQuizPage({
 
         const data = await res.json();
         if (data.action === 'AUTO_SUBMIT') {
+          isSubmittingRef.current = true;
+          isExamReadyRef.current = false;
+          exitFullscreenSafely();
           setViolationModal({
             show: true,
             title: 'Quiz Auto-Submitted',
@@ -210,6 +315,9 @@ export default function StudentLiveQuizPage({
             handleSubmitAttempt(true);
           }, 3500);
         } else if (data.action === 'TERMINATE') {
+          isSubmittingRef.current = true;
+          isExamReadyRef.current = false;
+          exitFullscreenSafely();
           setViolationModal({
             show: true,
             title: 'Attempt Terminated',
@@ -236,7 +344,7 @@ export default function StudentLiveQuizPage({
         console.error('Violation record error:', err);
       }
     },
-    [attemptToken, handleSubmitAttempt, publicCode, quizData?.settings?.enableAntiCheat, router]
+    [attemptToken, handleSubmitAttempt, publicCode, quizData?.settings?.enableAntiCheat, router, exitFullscreenSafely]
   );
 
   // 6. Anti-Cheating Browser Listeners
@@ -246,6 +354,7 @@ export default function StudentLiveQuizPage({
 
     // A. Tab Switch / Visibility change
     const handleVisibilityChange = () => {
+      if (!hasStartedExamRef.current || !isExamReadyRef.current || isSubmittingRef.current) return;
       if (document.hidden && settings.detectTabSwitch) {
         recordViolation('TAB_SWITCH', { reason: 'Student switched away from quiz tab' });
       }
@@ -253,6 +362,7 @@ export default function StudentLiveQuizPage({
 
     // B. Window Focus Loss / Blur
     const handleWindowBlur = () => {
+      if (!hasStartedExamRef.current || !isExamReadyRef.current || isSubmittingRef.current) return;
       if (settings.detectWindowBlur) {
         recordViolation('WINDOW_BLUR', { reason: 'Student clicked outside browser window' });
       }
@@ -260,6 +370,7 @@ export default function StudentLiveQuizPage({
 
     // C. Copy / Paste / Context Menu Prevention
     const handleCopy = (e: ClipboardEvent) => {
+      if (!hasStartedExamRef.current || isSubmittingRef.current) return;
       if (settings.detectCopy) {
         e.preventDefault();
         recordViolation('COPY_ATTEMPT', { reason: 'Copy attempted' });
@@ -267,6 +378,7 @@ export default function StudentLiveQuizPage({
     };
 
     const handlePaste = (e: ClipboardEvent) => {
+      if (!hasStartedExamRef.current || isSubmittingRef.current) return;
       if (settings.detectPaste) {
         e.preventDefault();
         recordViolation('PASTE_ATTEMPT', { reason: 'Paste attempted' });
@@ -274,6 +386,7 @@ export default function StudentLiveQuizPage({
     };
 
     const handleContextMenu = (e: MouseEvent) => {
+      if (!hasStartedExamRef.current || isSubmittingRef.current) return;
       if (settings.detectCopy) {
         e.preventDefault();
       }
@@ -281,16 +394,33 @@ export default function StudentLiveQuizPage({
 
     // D. Fullscreen Exit Detection & State Tracking
     const handleFullscreenChange = () => {
-      const active = !!document.fullscreenElement;
+      const active = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).mozFullScreenElement ||
+        (document as any).msFullscreenElement
+      );
       setIsFullscreen(active);
-      if (!active && settings.requireFullscreen && !isSubmittingRef.current) {
+
+      // STRICT CHECK: Never record violation if exam hasn't started, is submitting, or within grace period
+      if (!hasStartedExamRef.current || !isExamReadyRef.current || isSubmittingRef.current) {
+        return;
+      }
+
+      if (!active && settings.requireFullscreen) {
         recordViolation('FULLSCREEN_EXIT', { reason: 'Student exited fullscreen mode' });
       }
     };
 
-    // Check initial state
-    if (settings.requireFullscreen) {
-      setIsFullscreen(!!document.fullscreenElement);
+    // Initial check of fullscreen state without logging violation
+    if (typeof document !== 'undefined') {
+      const active = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).mozFullScreenElement ||
+        (document as any).msFullscreenElement
+      );
+      setIsFullscreen(active);
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -299,6 +429,9 @@ export default function StudentLiveQuizPage({
     document.addEventListener('paste', handlePaste);
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -307,22 +440,15 @@ export default function StudentLiveQuizPage({
       document.removeEventListener('paste', handlePaste);
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
   }, [quizData?.settings, recordViolation]);
 
   // Request Fullscreen helper
   const requestFullscreen = () => {
-    if (typeof document !== 'undefined' && document.documentElement.requestFullscreen) {
-      document.documentElement
-        .requestFullscreen()
-        .then(() => setIsFullscreen(true))
-        .catch((err) => {
-          console.warn('Fullscreen request failed:', err);
-        });
-    }
+    requestFullscreenSafely().then(() => setIsFullscreen(true));
   };
 
   // Answer selection handlers
@@ -1034,9 +1160,9 @@ export default function StudentLiveQuizPage({
         </Modal>
       )}
 
-      {/* MANDATORY FULLSCREEN GATE OVERLAY FOR STUDENTS */}
-      {quizData?.settings?.requireFullscreen && !isFullscreen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
+      {/* MANDATORY PRE-START FULLSCREEN GATE OVERLAY (Shown ONLY on entering the test) */}
+      {quizData?.settings?.requireFullscreen && !hasStartedExam && (
+        <div className="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-200">
           <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-5">
             <div className="w-16 h-16 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto shadow-lg">
               <Maximize className="w-8 h-8" />
@@ -1061,8 +1187,8 @@ export default function StudentLiveQuizPage({
 
             <button
               type="button"
-              onClick={requestFullscreen}
-              className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2"
+              onClick={handleEnterFullscreenAndStart}
+              className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Maximize className="w-4 h-4" />
               <span>Enter Fullscreen & Begin Exam</span>

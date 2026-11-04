@@ -16,6 +16,18 @@ export async function GET(
       where: { publicCode: publicCode.toUpperCase().trim() },
       include: {
         settings: true,
+        batches: {
+          include: {
+            batch: {
+              select: {
+                id: true,
+                name: true,
+                className: true,
+                department: true,
+              },
+            },
+          },
+        },
         questions: {
           select: {
             id: true,
@@ -92,6 +104,7 @@ export async function GET(
         totalQuestions,
         totalMarks: Math.round(totalMarks * 100) / 100,
         publicCode: quiz.publicCode,
+        assignedBatches: quiz.batches?.map((b) => b.batch.name) || [],
         settings: {
           requireName: quiz.settings?.requireName ?? true,
           requireRegisterNumber: quiz.settings?.requireRegisterNumber ?? true,
@@ -103,6 +116,8 @@ export async function GET(
           detectTabSwitch: quiz.settings?.detectTabSwitch ?? true,
           maxViolations: quiz.settings?.maxViolations ?? 3,
           disablePreviousQuestion: quiz.settings?.disablePreviousQuestion ?? false,
+          restrictToBatch: quiz.settings?.restrictToBatch ?? false,
+          allowResumeByAdmin: quiz.settings?.allowResumeByAdmin ?? true,
         },
       },
     });

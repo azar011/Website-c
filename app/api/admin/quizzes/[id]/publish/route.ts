@@ -10,11 +10,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const { id } = await params;
 
+  let body: any = {};
+  try {
+    body = await req.json();
+  } catch {
+    // Empty or non-JSON body allowed
+  }
+  const { accessMode, batchIds } = body;
+
   try {
     const quiz = await prisma.quiz.findUnique({
       where: { id },
       include: {
         settings: true,
+        batches: true,
         questions: {
           include: { options: true },
         },
@@ -25,6 +34,31 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 
+    // Determine access mode (PUBLIC vs BATCHES)
+    const effectiveRestrictToBatch =
+      accessMode !== undefined
+        ? accessMode === 'BATCHES'
+        : (quiz.settings?.restrictToBatch ?? false);
+
+    // Sync assigned batches only if explicitly passed when in BATCHES mode.
+    // If publishing in PUBLIC mode, preserve existing assigned batches so historical batch reports and rosters remain intact.
+    if (accessMode === 'BATCHES' && Array.isArray(batchIds)) {
+      await prisma.quizBatch.deleteMany({ where: { quizId: id } });
+      if (batchIds.length > 0) {
+        await prisma.quizBatch.createMany({
+          data: batchIds.map((bId: string) => ({
+            quizId: id,
+            batchId: bId,
+          })),
+        });
+      }
+    }
+
+    const currentBatchCount =
+      accessMode === 'BATCHES' && Array.isArray(batchIds)
+        ? batchIds.length
+        : await prisma.quizBatch.count({ where: { quizId: id } });
+
     // Publish Validation
     const errors: string[] = [];
 
@@ -34,6 +68,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (quiz.questions.length === 0) {
       errors.push('Quiz must contain at least one question before publishing.');
+    }
+
+    if (effectiveRestrictToBatch && currentBatchCount === 0) {
+      errors.push(
+        'You selected "Batches Only" access, but no student batches are assigned. Please select at least one batch or publish as a Public Quiz.'
+      );
     }
 
     let questionsWithoutCorrectAnswer = 0;
@@ -84,6 +124,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         data: {
           acceptResponses: true,
           isLinkDisabled: false,
+          restrictToBatch: effectiveRestrictToBatch,
+          singleResponse: effectiveRestrictToBatch ? true : quiz.settings.singleResponse,
+          requireRegisterNumber: effectiveRestrictToBatch ? true : quiz.settings.requireRegisterNumber,
         },
       });
     }

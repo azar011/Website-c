@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import {
   CheckCircle2,
@@ -24,20 +25,45 @@ export default function StudentResultPage({
   params: Promise<{ publicCode: string; attemptToken: string }>;
 }) {
   const { publicCode, attemptToken } = use(params);
+  const router = useRouter();
   const [resultData, setResultData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     // Automatically exit fullscreen when student completes the quiz
-    if (typeof document !== 'undefined' && document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
-    }
+    const exitFs = () => {
+      try {
+        if (typeof document !== 'undefined') {
+          if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+          } else if ((document as any).webkitFullscreenElement) {
+            (document as any).webkitExitFullscreen?.();
+          } else if ((document as any).mozFullScreenElement) {
+            (document as any).mozCancelFullScreen?.();
+          } else if ((document as any).msFullscreenElement) {
+            (document as any).msExitFullscreen?.();
+          }
+        }
+      } catch {
+        // Ignore
+      }
+    };
+
+    exitFs();
+    const t1 = setTimeout(exitFs, 150);
+    const t2 = setTimeout(exitFs, 500);
 
     fetch(`/api/public/attempt/${attemptToken}/result`)
       .then((res) => res.json())
       .then((data) => {
         if (data.result) {
+          if (data.result.status === 'IN_PROGRESS') {
+            // Test has been resumed by the instructor!
+            router.push(`/quiz/${publicCode}/attempt/${attemptToken}`);
+            return;
+          }
+
           setResultData(data.result);
           if (data.result.passed) {
             confetti({

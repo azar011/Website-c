@@ -10,6 +10,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   const { id } = await params;
+  const searchParams = req.nextUrl.searchParams;
+  const batchId = searchParams.get('batchId') || undefined;
+  const segment = (searchParams.get('segment') as any) || undefined;
 
   try {
     const quiz = await prisma.quiz.findUnique({
@@ -21,15 +24,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Quiz not found' }, { status: 404 });
     }
 
-    const csvContent = await generateQuizCsvReport(id);
-    const safeTitle = quiz.title.replace(/[^a-zA-Z0-9_-]/g, '_');
-    const filename = `${safeTitle}_Responses_${quiz.publicCode}.csv`;
+    const { content: csvContent, filename } = await generateQuizCsvReport(id, {
+      batchId,
+      segment,
+    });
 
     await prisma.auditLog.create({
       data: {
         adminId: admin.adminId,
         action: 'REPORT_DOWNLOADED',
-        details: JSON.stringify({ quizId: id, type: 'CSV', filename }),
+        details: JSON.stringify({ quizId: id, type: 'CSV', filename, batchId, segment }),
       },
     });
 
