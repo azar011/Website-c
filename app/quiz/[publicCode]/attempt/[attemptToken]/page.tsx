@@ -186,6 +186,9 @@ export default function StudentLiveQuizPage({
   // Student clicks "Enter Fullscreen & Begin Exam" from the pre-test gate
   const handleEnterFullscreenAndStart = async () => {
     await requestFullscreenSafely();
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
     setIsFullscreen(true);
     setHasStartedExam(true);
     hasStartedExamRef.current = true;
@@ -578,22 +581,22 @@ export default function StudentLiveQuizPage({
   const isLowTime = secondsRemaining !== null && secondsRemaining <= 120;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-indigo-500 selection:text-white w-full overflow-x-hidden">
       {/* TOP BAR */}
-      <header className="bg-slate-900 border-b border-slate-800 px-4 sm:px-6 py-3.5 sticky top-0 z-40 flex items-center justify-between gap-4">
-        <div>
+      <header className="bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-2.5 sm:py-3.5 sticky top-0 z-40 flex items-center justify-between gap-2 sm:gap-4 w-full">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-sm sm:text-base font-bold text-white truncate max-w-xs sm:max-w-md">
+            <h1 className="text-xs sm:text-base font-bold text-white truncate">
               {quizData?.quizTitle || 'Assessment'}
             </h1>
           </div>
-          <div className="text-[11px] text-slate-400 font-medium">
+          <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">
             Question {currentIdx + 1} of {questions.length} • {currentQ.marks} Marks
           </div>
         </div>
 
         {/* Center/Right: Timer & Auto-Save status & Fullscreen Button */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Auto-save visual indicator */}
           <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400">
             {saveStatus === 'saving' && (
@@ -617,22 +620,22 @@ export default function StudentLiveQuizPage({
           {quizData?.settings?.requireFullscreen && (
             <button
               onClick={requestFullscreen}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-xs"
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-xs shrink-0"
               title="Enter Fullscreen"
             >
-              <Maximize className="w-3.5 h-3.5" />
+              <Maximize className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           )}
 
           {/* Countdown Timer */}
           <div
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm transition ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm shrink-0 transition ${
               isLowTime
                 ? 'bg-rose-950/60 border-rose-600 text-rose-400 animate-pulse'
                 : 'bg-slate-950 border-slate-800 text-amber-400'
             }`}
           >
-            <Clock className="w-4 h-4" />
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>{formatTimer(secondsRemaining)}</span>
           </div>
         </div>
@@ -640,7 +643,7 @@ export default function StudentLiveQuizPage({
 
       {/* PERSISTENT NOTICE FROM BEGINNING OF TEST IF LINEAR MODE */}
       {isLinearMode && (
-        <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-center text-xs font-semibold text-amber-300 flex items-center justify-center gap-2 shadow-inner">
+        <div className="bg-amber-500/15 border-b border-amber-500/30 px-3 sm:px-4 py-2 text-center text-[10px] sm:text-xs font-semibold text-amber-300 flex items-center justify-center gap-1.5 sm:gap-2 shadow-inner">
           <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
           <span>
             <strong>Linear Exam Active:</strong> Backtracking is disabled. You cannot return to previous questions once you proceed.
@@ -649,51 +652,51 @@ export default function StudentLiveQuizPage({
       )}
 
       {/* MAIN EXAM BODY */}
-      <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <main className="flex-1 max-w-5xl mx-auto w-full p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
         {/* LEFT / CENTER: QUESTION VIEWER (2 Cols on lg) */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <div className="lg:col-span-2 space-y-4 w-full min-w-0">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-4 sm:space-y-6 w-full min-w-0">
             {/* Header: Question Badge & Mark for Review */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800 gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 truncate">
                   Question {currentIdx + 1}
                 </span>
                 {isLinearMode && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    Linear Exam
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
+                    Linear
                   </span>
                 )}
               </div>
 
               {isLinearMode ? (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] font-semibold text-amber-300" title="In linear mode, questions cannot be marked for later review because backtracking is disabled.">
-                  <Lock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Final on Proceed</span>
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10px] sm:text-[11px] font-semibold text-amber-300 shrink-0" title="In linear mode, questions cannot be marked for later review because backtracking is disabled.">
+                  <Lock className="w-3 h-3 text-amber-400" />
+                  <span>Final</span>
                 </div>
               ) : (
                 <button
                   type="button"
                   onClick={() => toggleMarkForReview(qId)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition ${
+                  className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold border transition shrink-0 ${
                     isMarked
                       ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
                       : 'border-slate-800 text-slate-400 hover:text-white'
                   }`}
                 >
                   <Bookmark className="w-3.5 h-3.5" />
-                  <span>{isMarked ? 'Marked for Review' : 'Mark for Review'}</span>
+                  <span>{isMarked ? 'Marked' : 'Mark for Review'}</span>
                 </button>
               )}
             </div>
 
             {/* Question Text */}
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-white leading-relaxed">
+              <h2 className="text-base sm:text-lg font-bold text-white leading-relaxed break-words">
                 {currentQ.questionText}
               </h2>
               {currentQ.description && (
-                <p className="text-xs text-slate-400 mt-2">{currentQ.description}</p>
+                <p className="text-xs text-slate-400 mt-2 break-words">{currentQ.description}</p>
               )}
             </div>
 
@@ -701,7 +704,7 @@ export default function StudentLiveQuizPage({
             <div className="pt-2">
               {/* 1. MCQ (Single Choice) */}
               {currentQ.type === 'MCQ' && (
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   {currentQ.options?.map((opt: any, optIdx: number) => {
                     let selectedId = '';
                     try {
@@ -715,14 +718,14 @@ export default function StudentLiveQuizPage({
                       <div
                         key={opt.id || optIdx}
                         onClick={() => handleSelectMCQ(qId, opt.id)}
-                        className={`p-4 rounded-2xl border cursor-pointer transition flex items-center gap-3.5 ${
+                        className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border cursor-pointer transition flex items-center gap-3 sm:gap-3.5 w-full min-w-0 ${
                           isSelected
                             ? 'bg-indigo-600/20 border-indigo-500 text-white font-semibold'
                             : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/60 hover:border-slate-700'
                         }`}
                       >
                         <div
-                          className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ${
+                          className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold shrink-0 ${
                             isSelected
                               ? 'border-indigo-500 bg-indigo-600 text-white'
                               : 'border-slate-700 text-slate-400'
@@ -730,7 +733,7 @@ export default function StudentLiveQuizPage({
                         >
                           {String.fromCharCode(65 + optIdx)}
                         </div>
-                        <span className="text-sm leading-relaxed">{opt.optionText}</span>
+                        <span className="text-xs sm:text-sm leading-relaxed break-words min-w-0 flex-1">{opt.optionText}</span>
                       </div>
                     );
                   })}
@@ -739,7 +742,7 @@ export default function StudentLiveQuizPage({
 
               {/* 2. MULTIPLE SELECT (Checkboxes) */}
               {currentQ.type === 'MULTIPLE_SELECT' && (
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   <div className="text-[11px] font-semibold text-indigo-400 mb-2">
                     Select all that apply:
                   </div>
@@ -756,7 +759,7 @@ export default function StudentLiveQuizPage({
                       <div
                         key={opt.id || optIdx}
                         onClick={() => handleToggleMultiSelect(qId, opt.id)}
-                        className={`p-4 rounded-2xl border cursor-pointer transition flex items-center gap-3.5 ${
+                        className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border cursor-pointer transition flex items-center gap-3 sm:gap-3.5 w-full min-w-0 ${
                           isSelected
                             ? 'bg-indigo-600/20 border-indigo-500 text-white font-semibold'
                             : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/60'
@@ -771,7 +774,7 @@ export default function StudentLiveQuizPage({
                         >
                           {isSelected && <Check className="w-3.5 h-3.5" />}
                         </div>
-                        <span className="text-sm">{opt.optionText}</span>
+                        <span className="text-xs sm:text-sm break-words min-w-0 flex-1">{opt.optionText}</span>
                       </div>
                     );
                   })}
@@ -780,7 +783,7 @@ export default function StudentLiveQuizPage({
 
               {/* 3. TRUE / FALSE */}
               {currentQ.type === 'TRUE_FALSE' && (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                   {currentQ.options?.map((opt: any) => {
                     let selectedId = '';
                     try {
@@ -794,7 +797,7 @@ export default function StudentLiveQuizPage({
                       <div
                         key={opt.id}
                         onClick={() => handleSelectMCQ(qId, opt.id)}
-                        className={`p-5 rounded-2xl border text-center cursor-pointer font-bold text-sm transition ${
+                        className={`p-4 sm:p-5 rounded-xl sm:rounded-2xl border text-center cursor-pointer font-bold text-xs sm:text-sm transition ${
                           isSelected
                             ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/30'
                             : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/60'
@@ -816,14 +819,14 @@ export default function StudentLiveQuizPage({
                     value={answers[qId]?.textAnswer || ''}
                     onChange={(e) => handleTextAnswerChange(qId, e.target.value)}
                     placeholder="Type your answer here..."
-                    className="w-full text-sm font-medium px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full text-xs sm:text-sm font-medium px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               )}
 
               {/* 5. MATCHING PAIRS */}
               {currentQ.type === 'MATCHING' && (
-                <div className="space-y-3">
+                <div className="space-y-2.5 sm:space-y-3">
                   <div className="text-xs text-slate-400 mb-2">
                     Select the matching target for each item:
                   </div>
@@ -839,13 +842,13 @@ export default function StudentLiveQuizPage({
                     return (
                       <div
                         key={opt.id}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-950/60 border border-slate-800"
                       >
-                        <span className="text-xs font-bold text-slate-200">{opt.optionText}</span>
+                        <span className="text-xs font-bold text-slate-200 break-words">{opt.optionText}</span>
                         <select
                           value={currentMatch}
                           onChange={(e) => handleMatchingChange(qId, opt.id, e.target.value)}
-                          className="text-xs px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="text-xs px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto"
                         >
                           <option value="">-- Select Matching Target --</option>
                           {currentQ.matchingTargets?.map((target: string) => (
@@ -869,13 +872,15 @@ export default function StudentLiveQuizPage({
                     value={answers[qId]?.textAnswer || ''}
                     onChange={(e) => handleTextAnswerChange(qId, e.target.value)}
                     placeholder="Write detailed explanation..."
-                    className="w-full text-xs font-medium p-4 rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full text-xs font-medium p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               )}
             </div>
-          </div>          {/* PREVIOUS / NEXT / SUBMIT ACTION BAR */}
-          <div className="flex items-center justify-between gap-3">
+          </div>
+
+          {/* PREVIOUS / NEXT / SUBMIT ACTION BAR */}
+          <div className="flex items-center justify-between gap-2 sm:gap-3 w-full">
             <button
               type="button"
               onClick={() => {
@@ -888,21 +893,21 @@ export default function StudentLiveQuizPage({
               }}
               disabled={currentIdx === 0 || isLinearMode}
               title={isLinearMode ? 'Cannot return to previous questions in linear mode' : 'Previous Question'}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-semibold border transition ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-semibold border transition shrink-0 ${
                 isLinearMode
                   ? 'bg-slate-950 border-slate-800/80 text-slate-600 cursor-not-allowed opacity-50'
                   : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800 disabled:opacity-30'
               }`}
             >
               {isLinearMode ? <Lock className="w-3.5 h-3.5 text-slate-600" /> : <ChevronLeft className="w-4 h-4" />}
-              <span>{isLinearMode ? 'Previous (Locked)' : 'Previous'}</span>
+              <span>{isLinearMode ? 'Locked' : 'Previous'}</span>
             </button>
 
             {currentIdx < questions.length - 1 ? (
               <button
                 type="button"
                 onClick={handleNextQuestion}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition"
+                className="flex items-center gap-1 sm:gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition shrink-0"
               >
                 <span>Next Question</span>
                 <ChevronRight className="w-4 h-4" />
@@ -911,7 +916,7 @@ export default function StudentLiveQuizPage({
               <button
                 type="button"
                 onClick={() => setShowSubmitModal(true)}
-                className="flex items-center gap-1.5 px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition"
+                className="flex items-center gap-1.5 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 transition shrink-0"
               >
                 <Send className="w-4 h-4" />
                 <span>Submit Assessment</span>
@@ -921,7 +926,7 @@ export default function StudentLiveQuizPage({
         </div>
 
         {/* RIGHT: QUESTION NAVIGATOR PALETTE */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl space-y-3 sm:space-y-4 w-full min-w-0">
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider">
               Question Navigator
@@ -930,7 +935,7 @@ export default function StudentLiveQuizPage({
           </div>
 
           {/* Grid Palette */}
-          <div className="grid grid-cols-5 gap-2 max-h-64 overflow-y-auto pr-1">
+          <div className="grid grid-cols-5 gap-1.5 sm:gap-2 max-h-56 sm:max-h-64 overflow-y-auto pr-1">
             {questions.map((q, idx) => {
               const a = answers[q.id];
               const isAns =
@@ -1162,22 +1167,22 @@ export default function StudentLiveQuizPage({
 
       {/* MANDATORY PRE-START FULLSCREEN GATE OVERLAY (Shown ONLY on entering the test) */}
       {quizData?.settings?.requireFullscreen && !hasStartedExam && (
-        <div className="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-200">
-          <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-5">
-            <div className="w-16 h-16 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto shadow-lg">
-              <Maximize className="w-8 h-8" />
+        <div className="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-6 text-center animate-in fade-in duration-200 overflow-y-auto w-full">
+          <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl space-y-4 sm:space-y-5 my-auto">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto shadow-lg">
+              <Maximize className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
 
             <div>
-              <h2 className="text-xl font-bold text-white tracking-tight">Fullscreen Exam Mode Required</h2>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Fullscreen Exam Mode Required</h2>
+              <p className="text-[11px] sm:text-xs text-slate-400 mt-1.5 leading-relaxed">
                 To maintain assessment integrity, this quiz must be conducted in full screen mode.
               </p>
             </div>
 
-            <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px] text-amber-400 text-left space-y-1">
+            <div className="p-2.5 sm:p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-[10px] sm:text-[11px] text-amber-400 text-left space-y-1">
               <div className="font-bold flex items-center gap-1.5">
-                <ShieldAlert className="w-3.5 h-3.5" />
+                <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
                 <span>Anti-Cheating Policy Active</span>
               </div>
               <p className="text-slate-400 text-[10px]">
@@ -1188,7 +1193,7 @@ export default function StudentLiveQuizPage({
             <button
               type="button"
               onClick={handleEnterFullscreenAndStart}
-              className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+              className="w-full py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Maximize className="w-4 h-4" />
               <span>Enter Fullscreen & Begin Exam</span>

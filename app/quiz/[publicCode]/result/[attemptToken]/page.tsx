@@ -109,34 +109,34 @@ export default function StudentResultPage({
   const settings = resultData.settings || {};
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-4 sm:p-6 selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-3 sm:p-6 selection:bg-indigo-500 selection:text-white w-full overflow-x-hidden">
       {/* Brand Header */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <Logo size="sm" subtitle="Evaluation" />
       </div>
 
       {/* Main Result Card */}
-      <div className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+      <div className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl space-y-4 sm:space-y-6">
         {/* Status Header */}
-        <div className="text-center space-y-3 pb-6 border-b border-slate-800">
+        <div className="text-center space-y-2.5 sm:space-y-3 pb-5 sm:pb-6 border-b border-slate-800">
           <div
-            className={`w-16 h-16 rounded-3xl flex items-center justify-center mx-auto shadow-xl ${
+            className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto shadow-xl ${
               resultData.passed
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                 : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/40'
             }`}
           >
             {resultData.passed ? (
-              <CheckCircle2 className="w-9 h-9" />
+              <CheckCircle2 className="w-7 h-7 sm:w-9 sm:h-9" />
             ) : (
-              <FileCheck className="w-9 h-9" />
+              <FileCheck className="w-7 h-7 sm:w-9 sm:h-9" />
             )}
           </div>
 
-          <h1 className="text-2xl font-black text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight break-words">
             Assessment Submitted Successfully!
           </h1>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 break-words">
             {resultData.quizTitle} • Participant: {resultData.studentName || 'Student'}
           </p>
 

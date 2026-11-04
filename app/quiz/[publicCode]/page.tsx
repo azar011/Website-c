@@ -125,16 +125,16 @@ export default function StudentQuizStartPage({
   const settings = quizData.settings || {};
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-4 sm:p-6">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center p-3 sm:p-6 w-full overflow-x-hidden">
       {/* Brand Header */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <Logo size="sm" subtitle="Assessment" />
       </div>
 
       {/* Main Card */}
-      <div className="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+      <div className="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-2xl backdrop-blur-xl">
         {/* Quiz Info Header */}
-        <div className="pb-6 border-b border-slate-800">
+        <div className="pb-5 sm:pb-6 border-b border-slate-800">
           <div className="flex items-center justify-between gap-2 mb-2">
             <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
               {quizData.subject || 'Examination'}
@@ -144,30 +144,30 @@ export default function StudentQuizStartPage({
             </span>
           </div>
 
-          <h1 className="text-2xl font-black text-white tracking-tight">{quizData.title}</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight break-words">{quizData.title}</h1>
           {quizData.description && (
-            <p className="text-xs text-slate-400 mt-2 leading-relaxed">{quizData.description}</p>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed break-words">{quizData.description}</p>
           )}
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-3 gap-2.5 mt-4 pt-4 border-t border-slate-800/80 text-center">
-            <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
-              <div className="text-[10px] text-slate-500 font-bold uppercase">Duration</div>
-              <div className="text-sm font-bold text-white mt-0.5">
+          <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mt-4 pt-4 border-t border-slate-800/80 text-center">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase truncate">Duration</div>
+              <div className="text-xs sm:text-sm font-bold text-white mt-0.5 truncate">
                 {quizData.durationMinutes} Mins
               </div>
             </div>
 
-            <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
-              <div className="text-[10px] text-slate-500 font-bold uppercase">Questions</div>
-              <div className="text-sm font-bold text-white mt-0.5">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase truncate">Questions</div>
+              <div className="text-xs sm:text-sm font-bold text-white mt-0.5 truncate">
                 {quizData.totalQuestions}
               </div>
             </div>
 
-            <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
-              <div className="text-[10px] text-slate-500 font-bold uppercase">Total Marks</div>
-              <div className="text-sm font-bold text-indigo-400 mt-0.5">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase truncate">Total Marks</div>
+              <div className="text-xs sm:text-sm font-bold text-indigo-400 mt-0.5 truncate">
                 {quizData.totalMarks} pts
               </div>
             </div>
